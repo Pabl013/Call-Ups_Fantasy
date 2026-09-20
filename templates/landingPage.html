@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURA Sports - Premium Experience</title>
+    
+    <!-- Fonts: Inter for an SF Pro-like clean aesthetic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --apple-dark: #314f8b;
+            --apple-surface: #1d1d1f;
+            --apple-surface-hover: #2d2d2f;
+            --apple-text: #f5f5f7;
+            --apple-muted: #86868b;
+            --apple-blue: #2997ff;
+            --apple-blue-hover: #147ce5;
+            --ease-apple: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--apple-dark);
+            color: var(--apple-text);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+            line-height: 1.5;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        button {
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        /* Layout Utilities */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        .container-sm {
+            max-width: 980px;
+        }
+
+        .text-center { text-align: center; }
+        
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .justify-center { justify-content: center; }
+        
+        .gap-4 { gap: 1rem; }
+        .gap-6 { gap: 1.5rem; }
+        .gap-8 { gap: 2rem; }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 50;
+            transition: all 0.3s ease;
+        }
+
+        .glass {
+            background: rgba(29, 29, 31, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            height: 56px;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 1.25rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-links {
+            display: none;
+            gap: 2.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .nav-links { display: flex; }
+        }
+
+        .nav-link {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: rgba(245, 245, 247, 0.8);
+            letter-spacing: 0.02em;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #ffffff;
+        }
+
+        /* Typography */
+        .hero-section {
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding-top: 100px;
+            padding-bottom: 3rem;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 700;
+            letter-spacing: -0.04em;
+            line-height: 1.05;
+            margin-bottom: 1rem;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(180deg, #ffffff 0%, #a1a1a6 100%);
+        }
+
+        @media (min-width: 768px) {
+            .hero-title { font-size: 4.5rem; }
+        }
+        @media (min-width: 1024px) {
+            .hero-title { font-size: 5.5rem; }
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--apple-muted);
+            font-weight: 500;
+            margin-bottom: 3rem;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        @media (min-width: 768px) {
+            .hero-subtitle { font-size: 1.5rem; }
+        }
+
+        /* Tactile & Glass Buttons */
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        @media (min-width: 640px) {
+            .button-group { flex-direction: row; }
+        }
+
+        /* Primary Tactile Button */
+        .btn-ultra {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 56px; /* VERY Large padding */
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1d1d1f;
+            background: linear-gradient(180deg, #ffffff 0%, #e5e5ea 100%);
+            border-radius: 9999px;
+            /* Complex shadow for a 3D physical feel */
+            box-shadow: 
+                inset 0 1px 1px rgba(255, 255, 255, 1),
+                inset 0 -2px 4px rgba(0, 0, 0, 0.15),
+                0 10px 24px -8px rgba(255, 255, 255, 0.25);
+            transition: all 0.5s var(--ease-apple);
+            overflow: hidden;
+            letter-spacing: -0.01em;
+        }
+
+        .btn-ultra:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 
+                inset 0 1px 1px rgba(255, 255, 255, 1),
+                inset 0 -2px 4px rgba(0, 0, 0, 0.15),
+                0 18px 36px -8px rgba(255, 255, 255, 0.35);
+        }
+
+        .btn-ultra:active {
+            /* Satisfying deep press animation */
+            transform: translateY(4px) scale(0.93);
+            background: linear-gradient(180deg, #d1d1d6 0%, #e5e5ea 100%);
+            box-shadow: 
+                inset 0 8px 16px rgba(0, 0, 0, 0.25),
+                inset 0 0 0 1px rgba(0, 0, 0, 0.05),
+                0 2px 4px -2px rgba(255, 255, 255, 0.1);
+        }
+
+        /* Secondary Glassmorphism Button */
+        .btn-glass-ultra {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 56px;
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: var(--apple-text);
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-radius: 9999px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.3);
+            transition: all 0.5s var(--ease-apple);
+            letter-spacing: -0.01em;
+        }
+
+        .btn-glass-ultra:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.25);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 18px 36px -8px rgba(0, 0, 0, 0.5);
+        }
+
+        .btn-glass-ultra:active {
+            transform: translateY(4px) scale(0.93);
+            background: rgba(255, 255, 255, 0.01);
+            box-shadow: inset 0 6px 12px rgba(0, 0, 0, 0.4);
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .btn-glass-ultra svg {
+            width: 24px;
+            height: 24px;
+            margin-left: 12px;
+            transition: transform 0.5s var(--ease-apple);
+        }
+
+        .btn-glass-ultra:hover svg {
+            transform: translateX(8px);
+        }
+
+        /* Imagery */
+        .cinematic-wrapper {
+            position: relative;
+            overflow: hidden;
+            border-radius: 24px;
+            margin-top: 5rem;
+            box-shadow: 0 25px 50px -12px rgba(41, 151, 255, 0.1);
+        }
+        
+        .cinematic-wrapper img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 1.5s var(--ease-apple);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .cinematic-wrapper:hover img {
+            transform: scale(1.03);
+        }
+
+        .vignette {
+            position: absolute;
+            inset: 0;
+            border-radius: 24px;
+            box-shadow: inset 0 0 100px rgba(0,0,0,0.8);
+            pointer-events: none;
+        }
+
+        /* Animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 1.2s var(--ease-apple), transform 1.2s var(--ease-apple);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .delay-200 { transition-delay: 200ms; }
+
+        /* Sections & Bento Grid */
+        .section-padded {
+            padding: 8rem 0;
+            background: var(--apple-dark);
+            position: relative;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+        }
+        
+        @media (min-width: 768px) { .section-title { font-size: 3.5rem; } }
+
+        .bento-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .bento-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .bento-card {
+            background-color: var(--apple-surface);
+            border-radius: 32px;
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        @media (min-width: 768px) { .bento-card { padding: 3.5rem; } }
+
+        .bento-card h3 {
+            font-size: 1.875rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .bento-card p {
+            color: var(--apple-muted);
+            font-size: 1.125rem;
+            font-weight: 500;
+            position: relative;
+            z-index: 10;
+        }
+
+        .bento-large-image {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            transform: translateY(2rem);
+            transition: transform 0.7s var(--ease-apple);
+        }
+
+        .bento-card:hover .bento-large-image {
+            transform: translateY(1rem);
+        }
+        
+        .bento-large-spacer {
+            margin-bottom: 16rem;
+        }
+
+        .bento-subgrid {
+            display: grid;
+            grid-template-rows: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .bento-center-content {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .gradient-text-large {
+            font-size: 3.75rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(180deg, #ffffff 0%, var(--apple-muted) 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .bento-icon-bg {
+            position: absolute;
+            right: -2.5rem;
+            bottom: -2.5rem;
+            width: 16rem;
+            height: 16rem;
+            background-color: var(--apple-surface-hover);
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.7s var(--ease-apple);
+        }
+        
+        .bento-card:hover .bento-icon-bg {
+            transform: scale(1.1);
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--apple-surface);
+            padding: 5rem 0 2.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        @media (min-width: 768px) {
+            .footer-grid { grid-template-columns: repeat(4, 1fr); }
+        }
+
+        .footer-col h4 {
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 0.75rem;
+            margin-bottom: 1rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .footer-col li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-col a {
+            color: var(--apple-muted);
+            font-size: 0.75rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-col a:hover {
+            color: #ffffff;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            font-size: 0.75rem;
+            color: var(--apple-muted);
+        }
+
+        @media (min-width: 768px) {
+            .footer-bottom {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+
+        .footer-legal-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .footer-legal-links a:hover {
+            color: #ffffff;
+        }
+        
+        .divider {
+            border-left: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar" id="navbar">
+        <div class="glass">
+            <div class="container container-sm flex justify-between items-center">
+                <div class="nav-logo">
+                    FantasyBall
+                </div>
+                
+                <div class="nav-links">
+                    <a href="#" class="nav-link">Live</a>
+                    <a href="#" class="nav-link">Originals</a>
+                    <a href="#" class="nav-link">Schedule</a>
+                    <a href="#" class="nav-link">Support</a>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <button class="nav-link">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero-section">
+        <div class="container text-center reveal">
+            <h1 class="hero-title">
+                Pure performance.<br>Pixel perfect.
+            </h1>
+            <p class="hero-subtitle" style="margin-inline: auto;">
+                Experience the world's most elite athletic events with unprecedented clarity, spatial audio, and cinematic depth.
+            </p>
+            
+            <div class="button-group justify-center">
+                <a href="#subscribe" class="btn-ultra">
+                    Start Watching
+                </a>
+                <a href="#trailer" class="btn-glass-ultra">
+                    Watch the trailer 
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+                </a>
+            </div>
+        </div>
+
+        <div class="container reveal delay-200">
+            <div class="cinematic-wrapper">
+                <img src="https://placehold.co/1200x675/111111/333333?text=Cinematic+Stadium+Shot" alt="Stadium Cinematic View">
+                <div class="vignette"></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padded">
+        <div class="container">
+            
+            <div class="text-center reveal" style="margin-bottom: 5rem;">
+                <h2 class="section-title">Designed for the obsessed.</h2>
+                <p class="hero-subtitle" style="margin-inline: auto;">
+                    Every statistic, every angle, every moment. Curated beautifully in an interface that gets out of the way.
+                </p>
+            </div>
+
+            <div class="bento-container">
+                <!-- Large Card -->
+                <div class="bento-card reveal">
+                    <div class="bento-large-spacer">
+                        <h3>Spatial Audio.</h3>
+                        <p>Hear the roar of the crowd like you're on the pitch.</p>
+                    </div>
+                    <img src="https://placehold.co/800x500/1d1d1f/444444?text=Audio+Visualizer+Graph" alt="Spatial Audio" class="bento-large-image">
+                </div>
+
+                <!-- Subgrid for Smaller Cards -->
+                <div class="bento-subgrid">
+                    <!-- Small Card 1 -->
+                    <div class="bento-card bento-center-content reveal">
+                        <span class="gradient-text-large">4K HDR</span>
+                        <h3>Crystal clear streams.</h3>
+                    </div>
+
+                    <!-- Small Card 2 -->
+                    <div class="bento-card reveal" style="justify-content: space-between;">
+                        <div>
+                            <h3>Live Stats Matrix.</h3>
+                            <p>Real-time data perfectly integrated.</p>
+                        </div>
+                        <div class="bento-icon-bg">
+                            <svg style="width: 64px; height: 64px; color: rgba(134, 134, 139, 0.5);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </section>
+
+    <section class="section-padded" style="border-top: 1px solid rgba(255,255,255,0.1);">
+        <div class="container text-center">
+            <div class="reveal" style="max-width: 800px; margin: 0 auto 4rem auto;">
+                <h2 class="section-title">Available on all your screens.</h2>
+            </div>
+            <div class="cinematic-wrapper reveal" style="background-color: var(--apple-surface); padding: 3rem; margin-top: 0;">
+                 <img src="https://placehold.co/1000x500/111111/444444?text=Minimalist+Device+Mockups" alt="Devices" style="border: none;">
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container container-sm">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>Explore</h4>
+                    <ul>
+                        <li><a href="#">Football</a></li>
+                        <li><a href="#">Basketball</a></li>
+                        <li><a href="#">Formula 1</a></li>
+                        <li><a href="#">Tennis</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="#">AURA+ Subscription</a></li>
+                        <li><a href="#">Supported Devices</a></li>
+                        <li><a href="#">Gift Cards</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Account</h4>
+                    <ul>
+                        <li><a href="#">Manage ID</a></li>
+                        <li><a href="#">Billing</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>About</h4>
+                    <ul>
+                        <li><a href="#">Newsroom</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Privacy</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>Copyright © 2026 AURA Inc. All rights reserved.</p>
+                <div class="footer-legal-links">
+                    <a href="#">Privacy Policy</a>
+                    <span class="divider"></span>
+                    <a href="#">Terms of Use</a>
+                    <span class="divider"></span>
+                    <a href="#">Legal</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const reveals = document.querySelectorAll(".reveal");
+
+            const revealOptions = {
+                threshold: 0.15,
+                rootMargin: "0px 0px -50px 0px"
+            };
+
+            const revealOnScroll = new IntersectionObserver(function(entries, observer) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("active");
+                        observer.unobserve(entry.target); 
+                    }
+                });
+            }, revealOptions);
+
+            reveals.forEach(reveal => {
+                revealOnScroll.observe(reveal);
+            });
+            
+            // Trigger immediately for elements in viewport on load
+            setTimeout(() => {
+                reveals.forEach(reveal => {
+                    const rect = reveal.getBoundingClientRect();
+                    if(rect.top < window.innerHeight) {
+                        reveal.classList.add("active");
+                    }
+                });
+            }, 100);
+        });
+    </script>
+</body>
+</html>
