@@ -1,2 +1,3 @@
-We will use Sports APIs' Football API
-  API's documentation: https://api-sports.io/documentation/football/v3#section/Introduction
+We will use Sports APIs' Football API.
+
+API's documentation: https://api-sports.io/documentation/football/v3#section/Introduction
