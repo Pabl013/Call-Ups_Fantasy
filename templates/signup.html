@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up — CallUps Fantasy</title>
+
+    <!-- Fonts: Inter for an SF Pro-like clean aesthetic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/signup.css') }}">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar" id="navbar">
+        <div class="glass">
+            <div class="container container-sm flex justify-between items-center">
+                <a href="{{ url_for('landingPage') }}" class="nav-logo">
+                    CallUps Fantasy
+                </a>
+                
+                <div class="nav-links">
+                    <a href="{{ url_for('landingPage') }}" class="nav-link">Live</a>
+                    <a href="{{ url_for('landingPage') }}" class="nav-link">Originals</a>
+                    <a href="{{ url_for('landingPage') }}" class="nav-link">Schedule</a>
+                    <a href="{{ url_for('landingPage') }}" class="nav-link">Support</a>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <span style="font-size: 0.85rem; color: var(--apple-muted);">Already a member?</span>
+                    <a href="{{ url_for('security.login') }}" class="nav-link" style="padding: 6px 16px; background: rgba(255,255,255,0.08); border-radius: 9999px; border: 1px solid rgba(255,255,255,0.15);">
+                        Log in
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Signup Section -->
+    <main class="signup-section">
+        <div class="container text-center">
+            
+            <div class="signup-hero">
+                <h1 class="hero-title">
+                    Create Your Account.
+                </h1>
+                <p class="hero-subtitle" style="margin-inline: auto;">
+                    Step into the world's most elite fantasy soccer experience.
+                </p>
+            </div>
+
+            <!-- Signup Form Card -->
+            <div class="signup-card">
+                
+                <!-- Flash error/info messages if any -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="auth-alert {% if category == 'error' or category == 'danger' %}auth-alert-danger{% else %}auth-alert-info{% endif %}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <!-- Form-level validation errors from Flask-Security -->
+                {% if register_user_form.errors %}
+                    <div class="auth-alert auth-alert-danger">
+                        {% for field_name, errors in register_user_form.errors.items() %}
+                            {% for err in errors %}
+                                <div>{{ err }}</div>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <!-- Client-side error banner -->
+                <div id="clientErrorBox" class="auth-alert auth-alert-danger" style="display: none;"></div>
+
+                <!-- Registration Form with Submit Function -->
+                <form action="{{ url_for('security.register') }}" method="POST" id="signupForm" onsubmit="return submitSignupForm(event)">
+                    {{ register_user_form.hidden_tag() }}
+
+                    <div class="form-group">
+                        <label class="form-label" for="username">Username</label>
+                        {{ register_user_form.username(class="form-input", id="username", placeholder="Choose a username", required=True, autocomplete="username") }}
+                        {% if register_user_form.username.errors %}
+                            {% for err in register_user_form.username.errors %}
+                                <span class="field-error">{{ err }}</span>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="email">Email Address</label>
+                        {{ register_user_form.email(class="form-input", id="email", placeholder="name@example.com", required=True, autocomplete="email") }}
+                        {% if register_user_form.email.errors %}
+                            {% for err in register_user_form.email.errors %}
+                                <span class="field-error">{{ err }}</span>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="password">Password</label>
+                        {{ register_user_form.password(class="form-input", id="password", placeholder="••••••••••••", required=True, autocomplete="new-password") }}
+                        {% if register_user_form.password.errors %}
+                            {% for err in register_user_form.password.errors %}
+                                <span class="field-error">{{ err }}</span>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    {% if register_user_form.password_confirm %}
+                    <div class="form-group">
+                        <label class="form-label" for="password_confirm">Confirm Password</label>
+                        {{ register_user_form.password_confirm(class="form-input", id="password_confirm", placeholder="••••••••••••", required=True, autocomplete="new-password") }}
+                        {% if register_user_form.password_confirm.errors %}
+                            {% for err in register_user_form.password_confirm.errors %}
+                                <span class="field-error">{{ err }}</span>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Form Submit Function (Matching Login Button) -->
+                    <button type="submit" class="btn-auth" id="submit" name="submit">Create Account</button>
+                </form>
+
+                <div class="signup-footer-links">
+                    Already have an account? 
+                    <a href="{{ url_for('security.login') }}" class="auth-link">Log in</a>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer identical to Landing Page -->
+    <footer class="footer">
+        <div class="container container-sm">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>Explore</h4>
+                    <ul>
+                        <li><a href="#">Football</a></li>
+                        <li><a href="#">Basketball</a></li>
+                        <li><a href="#">Formula 1</a></li>
+                        <li><a href="#">Tennis</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="#">AURA+ Subscription</a></li>
+                        <li><a href="#">Supported Devices</a></li>
+                        <li><a href="#">Gift Cards</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Account</h4>
+                    <ul>
+                        <li><a href="#">Manage ID</a></li>
+                        <li><a href="#">Billing</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>About</h4>
+                    <ul>
+                        <li><a href="#">Newsroom</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Privacy</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>Copyright © 2026 AURA Inc. All rights reserved.</p>
+                <div class="footer-legal-links">
+                    <a href="#">Privacy Policy</a>
+                    <span class="divider"></span>
+                    <a href="#">Terms of Use</a>
+                    <span class="divider"></span>
+                    <a href="#">Legal</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Submit Function & Client-Side Validation Script -->
+    <script>
+        function submitSignupForm(event) {
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            const confirmInput = document.getElementById('password_confirm');
+            const errorBox = document.getElementById('clientErrorBox');
+
+            if (!usernameInput || !passwordInput) return true;
+
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value;
+            const confirm = confirmInput ? confirmInput.value : null;
+
+            // Validate username minimum length (4 characters required by Flask-Security)
+            if (username.length < 4) {
+                event.preventDefault();
+                showError('Username must be at least 4 characters long.');
+                usernameInput.focus();
+                return false;
+            }
+
+            // Validate password confirmation match
+            if (confirmInput && password !== confirm) {
+                event.preventDefault();
+                showError('Passwords do not match. Please verify your password.');
+                confirmInput.focus();
+                return false;
+            }
+
+            // Clear previous errors
+            if (errorBox) {
+                errorBox.style.display = 'none';
+                errorBox.textContent = '';
+            }
+
+            // Provide visual feedback on submission
+            const submitBtn = document.getElementById('submit');
+            if (submitBtn) {
+                submitBtn.textContent = 'Creating Account...';
+                submitBtn.style.opacity = '0.75';
+            }
+
+            return true;
+        }
+
+        function showError(message) {
+            const errorBox = document.getElementById('clientErrorBox');
+            if (errorBox) {
+                errorBox.textContent = message;
+                errorBox.style.display = 'block';
+                errorBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    </script>
+</body>
+</html>
