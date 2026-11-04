@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — CallUps Fantasy</title>
+
+    <!-- Fonts: Inter for an SF Pro-like clean aesthetic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/landingPage.css') }}">
+</head>
+<body>
+
+    <nav class="navbar" id="navbar">
+        <div class="glass">
+            <div class="container container-sm flex justify-between items-center">
+                <a href="{{ url_for('index') }}" class="nav-logo">
+                    CallUps Fantasy
+                </a>
+
+                <div class="nav-links">
+                    <a href="{{ url_for('index') }}" class="nav-link" style="color: #ffffff;">Dashboard</a>
+                    <a href="#" class="nav-link">My Team</a>
+                    <a href="#" class="nav-link">Live Matches</a>
+                    <a href="#" class="nav-link">Standings</a>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <span style="font-size: 0.85rem; color: var(--apple-muted);">
+                        @{{ current_user.username }}
+                    </span>
+                    <a href="{{ url_for('security.logout') }}" class="nav-link" style="padding: 6px 14px; background: rgba(255,255,255,0.08); border-radius: 9999px; border: 1px solid rgba(255,255,255,0.12);">
+                        Log out
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-wrapper">
+        <div class="container container-sm">
+            <!-- Flash messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="auth-alert {% if category == 'error' or category == 'danger' %}auth-alert-danger{% else %}auth-alert-info{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <div class="dashboard-hero text-center">
+                <h1 class="hero-title" style="font-size: 3.5rem;">
+                    Welcome back,<br>{{ current_user.username }}.
+                </h1>
+                <p class="hero-subtitle" style="margin-inline: auto;">
+                    You are securely authenticated with Flask-Security-Too.
+                </p>
+            </div>
+
+            <div class="bento-container" style="margin-bottom: 3rem;">
+                <!-- Account Card -->
+                <div class="bento-card">
+                    <div style="margin-bottom: 2rem;">
+                        <span style="display: inline-block; padding: 4px 10px; background: rgba(41, 151, 255, 0.15); color: var(--apple-blue); border-radius: 8px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; margin-bottom: 1rem;">
+                            Profile
+                        </span>
+                        <h3>Account Overview</h3>
+                        <p style="margin-top: 0.5rem;">Signed in as <strong>{{ current_user.email }}</strong></p>
+                        <p style="margin-top: 0.25rem;">Username: <strong>@{{ current_user.username }}</strong></p>
+                        <p style="margin-top: 0.25rem;">Status: <span style="color: #34c759;">Active</span></p>
+                    </div>
+                    <div style="margin-top: auto;">
+                        <a href="{{ url_for('security.logout') }}" class="btn-glass-ultra" style="padding: 12px 28px; font-size: 0.95rem;">
+                            Log out
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Fast Actions Card -->
+                <div class="bento-card">
+                    <div>
+                        <span style="display: inline-block; padding: 4px 10px; background: rgba(52, 199, 89, 0.15); color: #34c759; border-radius: 8px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; margin-bottom: 1rem;">
+                            Roster
+                        </span>
+                        <h3>Season 2026/27</h3>
+                        <p style="margin-top: 0.5rem;">Manage your lineup and review live game performance.</p>
+                    </div>
+                    <div style="margin-top: 2rem;">
+                        <a href="{{ url_for('landingPage') }}" class="btn-ultra" style="padding: 14px 32px; font-size: 0.95rem;">
+                            Explore Home
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

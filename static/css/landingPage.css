@@ -485,3 +485,24 @@ button {
 .divider {
     border-left: 1px solid rgba(255, 255, 255, 0.2);
 }
+
+/* ==========================================================================
+   Home / Dashboard View
+   ========================================================================== */
+.dashboard-wrapper {
+    min-height: 100vh;
+    padding-top: 100px;
+    padding-bottom: 4rem;
+}
+
+.dashboard-hero {
+    margin-bottom: 3rem;
+}
+
+.dashboard-card {
+    background: var(--apple-surface);
+    border-radius: 28px;
+    padding: 2.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    margin-bottom: 2rem;
+}
