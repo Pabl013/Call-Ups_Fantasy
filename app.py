@@ -32,7 +32,7 @@ app.config["SECURITY_REGISTER_USER_TEMPLATE"] = "signup.html"
 # Post security views
 app.config['SECURITY_POST_LOGIN_VIEW'] = '/home'
 app.config['SECURITY_POST_LOGOUT_VIEW'] = '/'
-app.config['SECURITY_POST_REGISTER_VIEW'] = '/home'
+app.config['SECURITY_POST_REGISTER_VIEW'] = '/new-league'
 app.config['SECURITY_UNAUTHORIZED_VIEW'] = '/'
 
 # Initialize SQLAlchemy
@@ -81,6 +81,9 @@ def landingPage():
 def register_redirect():
     return redirect(url_for('security.register'))
 
+@app.route('/new-league')
+def new_league():
+    return render_template('newLeague.html')
 
 @app.route('/home')
 @auth_required()

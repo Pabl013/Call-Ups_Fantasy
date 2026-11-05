@@ -13,13 +13,14 @@
     <!-- Stylesheet -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
 </head>
-<body>
 
+<body>
+    <!-- Navigation Menu -->
     <nav class="navbar" id="navbar">
         <div class="glass">
             <div class="container container-sm flex justify-between items-center">
                 <a href="{{ url_for('landingPage') }}" class="nav-logo">
-                    CallUps Fantasy
+                    Call-Ups Fantasy
                 </a>
                 <div class="flex items-center gap-4">
                     <span style="font-size: 0.85rem; color: var(--apple-muted);">New user?</span>
@@ -29,12 +30,21 @@
         </div>
     </nav>
 
+
+
+    <!-- Form Section Start (div) -->
     <div class="auth-wrapper">
+        <div class="login-hero text-center">
+        <h1 class="hero-title">
+            CALL-UPS
+        </h1>
+        </div>
+
         <div class="auth-card">
             <div class="auth-header">
-                <a href="{{ url_for('landingPage') }}" class="auth-brand">CallUps Fantasy</a>
                 <h1 class="auth-title">Welcome Back</h1>
                 <p class="auth-subtitle">Sign in to manage your roster and live fantasy stats.</p>
+                <a href="{{ url_for('landingPage') }}" class="auth-brand">Return to home page</a>
             </div>
 
             <!-- Flash error/info messages if any -->
@@ -59,13 +69,13 @@
                 </div>
             {% endif %}
 
-            <!-- Sign in mode switcher (Email or Username) -->
+            <!-- Email/Username Switcher (role: tablist) -->
             <div class="auth-tabs" role="tablist">
-                <button type="button" class="auth-tab active" id="tab-email" onclick="switchLoginMode('email')">Email</button>
+                <button type="button" class="auth-tab active" id="tab-email" onclick="switchLoginMode('email')">Email</button> <!-- switchLoginMode function changes behavior -->
                 <button type="button" class="auth-tab" id="tab-username" onclick="switchLoginMode('username')">Username</button>
             </div>
 
-            <!-- Submit directly to Flask-Security login endpoint -->
+            <!-- Form Tag Start -->
             <form action="{{ url_for('security.login') }}" method="POST" id="loginForm">
                 {{ login_user_form.hidden_tag() }}
 
@@ -116,46 +126,6 @@
         </div>
     </div>
 
-    <script>
-        let currentMode = 'email';
-
-        function switchLoginMode(mode) {
-            currentMode = mode;
-            const tabEmail = document.getElementById('tab-email');
-            const tabUsername = document.getElementById('tab-username');
-            const input = document.getElementById('identityInput');
-            const label = document.getElementById('identityLabel');
-
-            if (mode === 'username') {
-                tabUsername.classList.add('active');
-                tabEmail.classList.remove('active');
-                label.textContent = 'Username';
-                input.type = 'text';
-                input.name = 'username';
-                input.placeholder = 'johndoe';
-                input.autocomplete = 'username';
-            } else {
-                tabEmail.classList.add('active');
-                tabUsername.classList.remove('active');
-                label.textContent = 'Email Address';
-                input.type = 'email';
-                input.name = 'email';
-                input.placeholder = 'john@example.com';
-                input.autocomplete = 'email';
-            }
-        }
-
-        // Smart auto-detection on submit: if user typed an email with '@' in username mode, or username without '@' in email mode
-        document.getElementById('loginForm').addEventListener('submit', function() {
-            const input = document.getElementById('identityInput');
-            const val = input.value.trim();
-            if (val.includes('@') && val.includes('.')) {
-                input.name = 'email';
-            }
-            else if (currentMode === 'username' || !val.includes('@')) {
-                input.name = 'username';
-            }
-        });
-    </script>
+    <script src="{{ url_for('static', filename='js/login.js') }}"></script>
 </body>
 </html>

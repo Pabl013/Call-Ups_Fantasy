@@ -20,15 +20,8 @@
         <div class="glass">
             <div class="container container-sm flex justify-between items-center">
                 <a href="{{ url_for('landingPage') }}" class="nav-logo">
-                    CallUps Fantasy
+                    Call-Ups Fantasy
                 </a>
-                
-                <div class="nav-links">
-                    <a href="{{ url_for('landingPage') }}" class="nav-link">Live</a>
-                    <a href="{{ url_for('landingPage') }}" class="nav-link">Originals</a>
-                    <a href="{{ url_for('landingPage') }}" class="nav-link">Schedule</a>
-                    <a href="{{ url_for('landingPage') }}" class="nav-link">Support</a>
-                </div>
 
                 <div class="flex items-center gap-4">
                     <span style="font-size: 0.85rem; color: var(--apple-muted);">Already a member?</span>
@@ -43,18 +36,18 @@
     <!-- Signup Section -->
     <main class="signup-section">
         <div class="container text-center">
-            
+            <!-- Sign up title, not in signup block -->
             <div class="signup-hero">
                 <h1 class="hero-title">
                     Create Your Account.
                 </h1>
-                <p class="hero-subtitle" style="margin-inline: auto;">
+                <p class="hero-subtitle">
                     Step into the world's most elite fantasy soccer experience.
                 </p>
             </div>
 
-            <!-- Signup Form Card -->
-            <div class="signup-card">
+            <!-- Signup Form Block -->
+            <div class="signup-block">
                 
                 <!-- Flash error/info messages if any -->
                 {% with messages = get_flashed_messages(with_categories=true) %}
@@ -127,7 +120,7 @@
                     </div>
                     {% endif %}
 
-                    <!-- Form Submit Function (Matching Login Button) -->
+                    <!-- Form Submit Function -->
                     <button type="submit" class="btn-auth" id="submit" name="submit">Create Account</button>
                 </form>
 
@@ -146,23 +139,6 @@
         <div class="container container-sm">
             <div class="footer-grid">
                 <div class="footer-col">
-                    <h4>Explore</h4>
-                    <ul>
-                        <li><a href="#">Football</a></li>
-                        <li><a href="#">Basketball</a></li>
-                        <li><a href="#">Formula 1</a></li>
-                        <li><a href="#">Tennis</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <h4>Services</h4>
-                    <ul>
-                        <li><a href="#">AURA+ Subscription</a></li>
-                        <li><a href="#">Supported Devices</a></li>
-                        <li><a href="#">Gift Cards</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
                     <h4>Account</h4>
                     <ul>
                         <li><a href="#">Manage ID</a></li>
@@ -180,7 +156,7 @@
             </div>
             
             <div class="footer-bottom">
-                <p>Copyright © 2026 AURA Inc. All rights reserved.</p>
+                <p>Copyright © 2026 Call-Ups Inc. All rights reserved.</p>
                 <div class="footer-legal-links">
                     <a href="#">Privacy Policy</a>
                     <span class="divider"></span>
@@ -193,59 +169,6 @@
     </footer>
 
     <!-- Submit Function & Client-Side Validation Script -->
-    <script>
-        function submitSignupForm(event) {
-            const usernameInput = document.getElementById('username');
-            const passwordInput = document.getElementById('password');
-            const confirmInput = document.getElementById('password_confirm');
-            const errorBox = document.getElementById('clientErrorBox');
-
-            if (!usernameInput || !passwordInput) return true;
-
-            const username = usernameInput.value.trim();
-            const password = passwordInput.value;
-            const confirm = confirmInput ? confirmInput.value : null;
-
-            // Validate username minimum length (4 characters required by Flask-Security)
-            if (username.length < 4) {
-                event.preventDefault();
-                showError('Username must be at least 4 characters long.');
-                usernameInput.focus();
-                return false;
-            }
-
-            // Validate password confirmation match
-            if (confirmInput && password !== confirm) {
-                event.preventDefault();
-                showError('Passwords do not match. Please verify your password.');
-                confirmInput.focus();
-                return false;
-            }
-
-            // Clear previous errors
-            if (errorBox) {
-                errorBox.style.display = 'none';
-                errorBox.textContent = '';
-            }
-
-            // Provide visual feedback on submission
-            const submitBtn = document.getElementById('submit');
-            if (submitBtn) {
-                submitBtn.textContent = 'Creating Account...';
-                submitBtn.style.opacity = '0.75';
-            }
-
-            return true;
-        }
-
-        function showError(message) {
-            const errorBox = document.getElementById('clientErrorBox');
-            if (errorBox) {
-                errorBox.textContent = message;
-                errorBox.style.display = 'block';
-                errorBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-        }
-    </script>
+    <script src="{{ url_for('static', filename='js/signup.js') }}"></script>
 </body>
 </html>
