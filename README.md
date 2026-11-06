@@ -76,3 +76,4 @@ Libraries to install:
 - Flask-Security-Too
 - Bcrypt-flask
 - Bleach
+- For teammates pulling these changes: Have them run pip install python-dotenv and copy .env.example to .env with their own local keys.

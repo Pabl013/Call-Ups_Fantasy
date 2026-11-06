@@ -1,15 +1,24 @@
 import os
+from dotenv import load_dotenv
 from flask import Flask, render_template, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_security import Security, SQLAlchemyUserDatastore, auth_required, UserMixin, RoleMixin
 
+load_dotenv()
+
 app = Flask(__name__)
 
 # Configurations
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'Wfye2-J8IUOziYCFCsVZrIMS_fQrR_AZN2mAN_QoLac')
+if not os.environ.get('SECRET_KEY') or not os.environ.get('SECURITY_PASSWORD_SALT'):
+    raise RuntimeError(
+        "Missing SECRET_KEY or SECURITY_PASSWORD_SALT environment variables. "
+        "Copy .env.example to .env and set valid values."
+    )
+
+app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
 app.config['SECURITY_USERNAME_ENABLE'] = True
 app.config['SECURITY_USERNAME_REQUIRED'] = True
-app.config['SECURITY_PASSWORD_SALT'] = os.environ.get('SECURITY_PASSWORD_SALT', '8386294171349055567303737871625959197')
+app.config['SECURITY_PASSWORD_SALT'] = os.environ['SECURITY_PASSWORD_SALT']
 app.config['SECURITY_PASSWORD_HASH'] = 'bcrypt'
 app.config['SECURITY_RECOVERABLE'] = False # For now. Fewer features for now is better
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///app.db')
@@ -92,4 +101,5 @@ def index():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    debug_mode = os.environ.get('FLASK_DEBUG', '0').lower() in ('1', 'true', 'yes')
+    app.run(debug=debug_mode)
