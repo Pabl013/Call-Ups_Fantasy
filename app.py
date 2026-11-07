@@ -91,6 +91,7 @@ def register_redirect():
     return redirect(url_for('security.register'))
 
 @app.route('/new-league')
+@auth_required()
 def new_league():
     return render_template('newLeague.html')
 
