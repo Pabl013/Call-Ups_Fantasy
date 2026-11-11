@@ -18,9 +18,6 @@ ToDo List
     - only members of league can access. Code locked or something.
   - Players (search players)
     - uses same player bio as my team
-- User Profile:
-  - logout
-  - delete account
 - Creation of bots:
   - way to choose players in draft:
 - Privacy Policy & etc...
