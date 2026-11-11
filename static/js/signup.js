@@ -1,5 +1,8 @@
+const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
 function submitSignupForm(event) {
     const usernameInput = document.getElementById('username');
+    const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');
     const confirmInput = document.getElementById('password_confirm');
     const errorBox = document.getElementById('clientErrorBox');
@@ -7,6 +10,7 @@ function submitSignupForm(event) {
     if (!usernameInput || !passwordInput) return true;
 
     const username = usernameInput.value.trim();
+    const email = emailInput ? emailInput.value.trim() : '';
     const password = passwordInput.value;
     const confirm = confirmInput ? confirmInput.value : null;
 
@@ -15,6 +19,14 @@ function submitSignupForm(event) {
         event.preventDefault();
         showError('Username must be at least 4 characters long.');
         usernameInput.focus();
+        return false;
+    }
+
+    // Validate email format
+    if (emailInput && !emailRegex.test(email)) {
+        event.preventDefault();
+        showError('Please enter a valid email address.');
+        emailInput.focus();
         return false;
     }
 

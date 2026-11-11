@@ -69,6 +69,9 @@
                 </div>
             {% endif %}
 
+            <!-- Client-side error banner -->
+            <div id="clientErrorBox" class="auth-alert auth-alert-danger" style="display: none;"></div>
+
             <!-- Email/Username Switcher (role: tablist) -->
             <div class="auth-tabs" role="tablist">
                 <button type="button" class="auth-tab active" id="tab-email" onclick="switchLoginMode('email')">Email</button> <!-- switchLoginMode function changes behavior -->

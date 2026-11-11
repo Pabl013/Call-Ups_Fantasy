@@ -1,4 +1,5 @@
 let currentMode = 'email';
+const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 function switchLoginMode(mode) {
     currentMode = mode;
@@ -6,6 +7,12 @@ function switchLoginMode(mode) {
     const tabUsername = document.getElementById('tab-username');
     const input = document.getElementById('identityInput');
     const label = document.getElementById('identityLabel');
+    const errorBox = document.getElementById('clientErrorBox');
+
+    if (errorBox) {
+        errorBox.style.display = 'none';
+        errorBox.textContent = '';
+    }
 
     if (mode === 'username') {
         tabUsername.classList.add('active');
@@ -26,14 +33,33 @@ function switchLoginMode(mode) {
     }
 }
 
-// Smart auto-detection on submit: if user typed an email with '@' in username mode, or username without '@' in email mode
-document.getElementById('loginForm').addEventListener('submit', function() {
+// Username or email validation and detection on submit
+document.getElementById('loginForm').addEventListener('submit', function(event) {
     const input = document.getElementById('identityInput');
+    const errorBox = document.getElementById('clientErrorBox');
     const val = input.value.trim();
-    if (val.includes('@') && val.includes('.')) {
+
+    if (currentMode === 'email') {
+        if (!emailRegex.test(val)) {
+            event.preventDefault();
+            if (errorBox) {
+                errorBox.textContent = 'Please enter a valid email address.';
+                errorBox.style.display = 'block';
+                errorBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            input.focus();
+            return;
+        }
         input.name = 'email';
-    }
-    else if (currentMode === 'username' || !val.includes('@')) {
+    } else if (emailRegex.test(val)) {
+        input.name = 'email';
+    } else {
         input.name = 'username';
     }
+
+    if (errorBox) {
+        errorBox.style.display = 'none';
+        errorBox.textContent = '';
+    }
 });
+
