@@ -10,6 +10,52 @@ ToDo List
   - create new league feature
     - how many bots
     - what leagues' players
+    - points system (how many points worth):
+      - Attackers:
+        - goals
+        - hat-tricks
+        - assists
+        - shots
+        - shots on target
+        - dribbles
+        - passing accuracy
+        - offsides
+        - fouls
+        - yellow card
+        - red card
+        - won game
+      - Midfielders:
+        - goals
+        - hat-trick
+        - assists
+        - dribbles
+        - tackles
+        - passing accuracy
+        - duels
+        - offsides
+        - interceptions
+        - fouls
+        - yellow card
+        - red card
+        - won game
+      - Defenders:
+        - goals
+        - assists
+        - passing accuracy
+        - tackles
+        - duels
+        - interceptions
+        - clearance
+        - recovery
+        - blocked shots
+        - fouls
+        - yellow card
+        - red card
+        - won game
+      - Goalkeepers:
+        - clean sheet
+        - saves
+        - penalty saves
 - Home Page:
   - My team page
     - team with starting XI, bench, injury reserve, taxi squad
