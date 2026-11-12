@@ -1,10 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>Creating a league</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Create League - Call-Ups Fantasy</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/newLeague.css') }}">
 </head>
+
 <body>
 
+    <main class="league-container">
+
+        <h1 class="league-title">Create Your Fantasy League</h1>
+
+        <p class="league-subtitle">
+            Customize your league and start your fantasy journey!
+        </p>
+
+        <div class="league-card">
+
+ <form method="POST" action="{{ url_for('new_league') }}">
+    <input type="hidden"   name="csrf_token"   value="{{ csrf_token() }}">
+
+                <!-- League Name -->
+                <div class="form-group">
+
+                    <label for="leagueName">League Name</label>
+
+                    <input
+                        type="text"
+                        id="leagueName"
+                        name="leagueName"
+                        placeholder="Enter your league name"
+                        required
+                    >
+
+                </div>
+
+                <!-- Number of Bots -->
+                <div class="form-group">
+
+                    <label for="bots">Number of Bots</label>
+
+                    <select id="bots" name="bots">
+
+                        <option value="0">0 Bots</option>
+                        <option value="2">2 Bots</option>
+                        <option value="4">4 Bots</option>
+                        <option value="6">6 Bots</option>
+
+                    </select>
+
+                </div>
+
+                <!-- Football Leagues -->
+                <h2 class="leagues-title">Select Football Leagues</h2>
+
+                <p class="leagues-description">
+                    Choose which football leagues you want to include.
+                </p>
+
+                <div class="checkbox-group">
+
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="footballLeagues" value="Premier League">
+                        Premier League
+                    </label>
+
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="footballLeagues" value="La Liga">
+                        La Liga
+                    </label>
+
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="footballLeagues" value="Serie A">
+                        Serie A
+                    </label>
+
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="footballLeagues" value="Bundesliga">
+                        Bundesliga
+                    </label>
+
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="footballLeagues" value="Ligue 1">
+                        Ligue 1
+                    </label>
+
+                </div>
+
+                <!-- Create League Button -->
+                <button type="submit" class="create-btn">
+                    Create League
+                </button>
+
+            </form>
+
+        </div>
+
+    </main>
+
 </body>
+
 </html>

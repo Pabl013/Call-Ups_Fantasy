@@ -1,0 +1,159 @@
+/* Call-Ups Fantasy - Create League */
+
+:root {
+    --apple-dark: #314f8b;
+    --apple-surface: #1d1d1f;
+    --apple-text: #f5f5f7;
+    --apple-muted: #86868b;
+    --apple-blue: #2997ff;
+}
+
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Page Background */
+body {
+    background-color: var(--apple-dark);
+    color: var(--apple-text);
+    font-family: 'Inter', Arial, sans-serif;
+    min-height: 100vh;
+}
+
+/* Main Container */
+.league-container {
+    max-width: 850px;
+    margin: 80px auto;
+    padding: 20px;
+}
+
+/* Title */
+.league-title {
+    font-size: 48px;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+/* Subtitle */
+.league-subtitle {
+    text-align: center;
+    color: #c5c5c5;
+    font-size: 18px;
+    margin-bottom: 40px;
+}
+
+/* Form Card */
+.league-card {
+    background-color: var(--apple-surface);
+    border-radius: 32px;
+    padding: 45px;
+}
+
+/* Form Groups */
+.form-group {
+    margin-bottom: 30px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 12px;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+/* Text Input and Select */
+.form-group input[type="text"],
+.form-group select {
+    width: 100%;
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid #444;
+    background-color: #2d2d2f;
+    color: white;
+    font-size: 16px;
+}
+
+/* Focus Effect */
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--apple-blue);
+}
+
+/* Football Leagues */
+.leagues-title {
+    font-size: 24px;
+    margin-bottom: 12px;
+}
+
+.leagues-description {
+    color: var(--apple-muted);
+    margin-bottom: 20px;
+}
+
+/* Checkbox Container */
+.checkbox-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+/* Checkbox Items */
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px;
+    background-color: #2d2d2f;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+.checkbox-item:hover {
+    background-color: #3a3a3c;
+}
+
+.checkbox-item input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--apple-blue);
+}
+
+/* Create League Button */
+.create-btn {
+    width: 100%;
+    padding: 20px;
+    border: none;
+    border-radius: 50px;
+    background: linear-gradient(180deg, #ffffff, #e5e5ea);
+    color: #1d1d1f;
+    font-size: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.create-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(255,255,255,0.2);
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+
+    .league-title {
+        font-size: 34px;
+    }
+
+    .league-card {
+        padding: 25px;
+    }
+
+    .checkbox-group {
+        grid-template-columns: 1fr;
+    }
+}
