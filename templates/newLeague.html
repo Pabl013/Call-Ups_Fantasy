@@ -2,9 +2,382 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Creating a league</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creating a League — Call-Ups Fantasy</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/newLeague.css') }}">
 </head>
+
 <body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar" id="navbar">
+        <div class="glass">
+            <div class="container container-sm flex justify-between items-center">
+                <a href="{{ url_for('landingPage') }}" class="nav-logo">
+                    Call-Ups Fantasy
+                </a>
+                <div class="flex items-center gap-4">
+                    <a href="{{ url_for('index') }}" class="nav-link-pill">Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-wrapper">
+        <div class="container container-sm">
+
+            <!-- Flash messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="auth-alert {% if category == 'error' or category == 'danger' %}auth-alert-danger{% else %}auth-alert-info{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <!-- Title and text -->
+            <div class="dashboard-hero text-center">
+                <span class="eyebrow-badge">League Architect</span>
+                <h1 class="hero-title" style="font-size: 3.5rem;">
+                    It Starts Now!
+                </h1>
+                <p class="hero-subtitle" style="margin-inline: auto;">
+                    Create a new league and customize your rules for your opening Call-Ups draft.
+                </p>
+            </div>
+
+            <!-- League Configuration Form (Single Unified Card) -->
+            <form id="createLeagueForm" action="{{ url_for('new_league') }}" method="POST" class="league-config-form">
+                <div class="bento-card bento-create-card unified-league-card">
+
+                    <!-- Card Header -->
+                    <div class="unified-card-header">
+                        <div>
+                            <span class="card-tag tag-blue">League Setup</span>
+                            <h3>Initialize Your League</h3>
+                            <p>Configure your AI bot opponents and choose which leagues and player pools are in play.</p>
+                        </div>
+                        <div class="unified-header-badges">
+                            <span id="totalTeamsBadge" class="config-pill">
+                                {{ (bot_count or 7) + 1 }} Total Teams
+                            </span>
+                            <span id="selectedLeaguesCountBadge" class="config-pill config-pill-green">
+                                {{ (selected_league_ids | length) if selected_league_ids else 1 }} In Play
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="unified-card-grid">
+                        <!-- Section 1: Bot Count (1 to 15) -->
+                        <div class="unified-section">
+                            <h4 class="unified-section-title">1. How Many Bots?</h4>
+                            <p class="unified-section-desc">Choose between 1 and 15 AI-controlled clubs to compete against.</p>
+
+                            <div class="bot-selector-box">
+                                <label for="botCountInput" class="form-field-label">Number of Bot Clubs (1 – 15)</label>
+
+                                <div class="bot-input-row">
+                                    <button type="button" id="botDecrementBtn" class="stepper-btn" aria-label="Decrease bots">&minus;</button>
+                                    <input
+                                        type="number"
+                                        id="botCountInput"
+                                        name="bot_count"
+                                        class="bot-number-input"
+                                        min="1"
+                                        max="15"
+                                        step="1"
+                                        value="{{ bot_count or 7 }}"
+                                        required
+                                    >
+                                    <button type="button" id="botIncrementBtn" class="stepper-btn" aria-label="Increase bots">+</button>
+                                </div>
+
+                                <div class="bot-slider-wrap">
+                                    <input
+                                        type="range"
+                                        id="botCountRange"
+                                        class="bot-range-slider"
+                                        min="1"
+                                        max="15"
+                                        step="1"
+                                        value="{{ bot_count or 7 }}"
+                                    >
+                                    <div class="bot-slider-ticks">
+                                        <span>1 Bot</span>
+                                        <span>5 Bots</span>
+                                        <span>10 Bots</span>
+                                        <span>15 Bots</span>
+                                    </div>
+                                </div>
+
+                                <div class="bot-breakdown-bar">
+                                    <span><strong>You</strong> (1 Manager)</span>
+                                    <span class="breakdown-plus">+</span>
+                                    <span><strong id="botCountSummaryText">{{ bot_count or 7 }}</strong> AI Bots</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section 2: Leagues & Player Pools Dropdown -->
+                        <div class="unified-section">
+                            <h4 class="unified-section-title">2. Leagues &amp; Players in Play</h4>
+                            <p class="unified-section-desc">Select which leagues and their registered player squads will be eligible.</p>
+
+                            <div class="league-selector-box">
+                                <label for="leagueDropdown" class="form-field-label">Select League &amp; Player Pool</label>
+
+                                <div class="dropdown-action-row">
+                                    <div class="select-wrapper">
+                                        <select id="leagueDropdown" name="league_dropdown" class="league-select">
+                                            <option value="" disabled selected>Choose a league &amp; player pool to add...</option>
+                                            {% for league in available_leagues %}
+                                                <option value="{{ league.id }}">
+                                                    {{ league.name }} ({{ league.country }}) — {{ league.players_pool }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                        <svg class="select-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    </div>
+                                    <button type="button" id="addLeagueBtn" class="btn-add-league">
+                                        + Add
+                                    </button>
+                                </div>
+
+                                <div class="preset-chips-row">
+                                    <span class="preset-label">Quick Presets:</span>
+                                    <button type="button" class="preset-chip" id="presetTop5Btn">Top 5 European</button>
+                                    <button type="button" class="preset-chip" id="presetAllBtn">All Global Leagues</button>
+                                    <button type="button" class="preset-chip preset-chip-clear" id="clearLeaguesBtn">Clear</button>
+                                </div>
+
+                                <!-- Active Leagues & Players List -->
+                                <div class="active-leagues-header">
+                                    <span>Active Leagues &amp; Eligible Players</span>
+                                </div>
+                                <div id="selectedLeaguesList" class="selected-leagues-list">
+                                    <!-- Populated via JS -->
+                                </div>
+
+                                <!-- Hidden inputs synced for form submission -->
+                                <div id="hiddenLeagueInputs"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card Submit Footer -->
+                    <div class="unified-card-footer">
+                        <div class="submit-summary-col">
+                            <h4>Ready to Launch Your Call-Ups League?</h4>
+                            <p id="finalConfigSummary">
+                                Configuring league with {{ bot_count or 7 }} AI bots and selected global player pools.
+                            </p>
+                        </div>
+                        <div class="submit-action-col">
+                            <button type="submit" id="createLeagueSubmitBtn" class="btn-ultra">
+                                Initialize League &amp; Enter Dashboard
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    <script id="availableLeaguesData" type="application/json">
+        {{ (available_leagues or []) | tojson }}
+    </script>
+    <script id="initialSelectedLeaguesData" type="application/json">
+        {{ (selected_league_ids or ["39"]) | tojson }}
+    </script>
+
+    <script>
+        (function () {
+            const availableLeagues = JSON.parse(document.getElementById('availableLeaguesData').textContent || '[]');
+            const initialSelectedIds = JSON.parse(document.getElementById('initialSelectedLeaguesData').textContent || '["39"]');
+            const leagueMap = new Map(availableLeagues.map(l => [String(l.id), l]));
+            const selectedIds = new Set(initialSelectedIds.map(String).filter(id => leagueMap.has(id)));
+
+            const botInput = document.getElementById('botCountInput');
+            const botRange = document.getElementById('botCountRange');
+            const botDecBtn = document.getElementById('botDecrementBtn');
+            const botIncBtn = document.getElementById('botIncrementBtn');
+            const botCountSummaryText = document.getElementById('botCountSummaryText');
+            const totalTeamsBadge = document.getElementById('totalTeamsBadge');
+
+            const leagueDropdown = document.getElementById('leagueDropdown');
+            const addLeagueBtn = document.getElementById('addLeagueBtn');
+            const presetTop5Btn = document.getElementById('presetTop5Btn');
+            const presetAllBtn = document.getElementById('presetAllBtn');
+            const clearLeaguesBtn = document.getElementById('clearLeaguesBtn');
+            const selectedLeaguesList = document.getElementById('selectedLeaguesList');
+            const hiddenLeagueInputs = document.getElementById('hiddenLeagueInputs');
+            const selectedLeaguesCountBadge = document.getElementById('selectedLeaguesCountBadge');
+            const finalConfigSummary = document.getElementById('finalConfigSummary');
+            const createLeagueForm = document.getElementById('createLeagueForm');
+
+            function clampBots(val) {
+                const parsed = parseInt(val, 10);
+                if (isNaN(parsed)) return 1;
+                return Math.min(15, Math.max(1, parsed));
+            }
+
+            function syncBotCount(newVal) {
+                const count = clampBots(newVal);
+                botInput.value = count;
+                botRange.value = count;
+                botCountSummaryText.textContent = count;
+                totalTeamsBadge.textContent = `${count + 1} Total Teams`;
+                botDecBtn.disabled = count <= 1;
+                botIncBtn.disabled = count >= 15;
+                updateFinalSummary();
+            }
+
+            function renderSelectedLeagues() {
+                // Disable already-selected options in dropdown so user sees what's remaining
+                Array.from(leagueDropdown.options).forEach(opt => {
+                    if (!opt.value) return;
+                    const alreadyInPlay = selectedIds.has(opt.value);
+                    opt.disabled = alreadyInPlay;
+                    const league = leagueMap.get(opt.value);
+                    if (league) {
+                        opt.textContent = alreadyInPlay
+                            ? `✓ ${league.name} (${league.country}) — In Play`
+                            : `${league.name} (${league.country}) — ${league.players_pool}`;
+                    }
+                });
+
+                const count = selectedIds.size;
+                selectedLeaguesCountBadge.textContent = `${count} ${count === 1 ? 'League' : 'Leagues'} In Play`;
+
+                hiddenLeagueInputs.innerHTML = Array.from(selectedIds)
+                    .map(id => `<input type="hidden" name="leagues" value="${id}">`)
+                    .join('');
+
+                if (count === 0) {
+                    selectedLeaguesList.innerHTML = `
+                        <div class="leagues-empty-state">
+                            No leagues selected yet. Pick a league from the dropdown above to put its players in play.
+                        </div>
+                    `;
+                    updateFinalSummary();
+                    return;
+                }
+
+                selectedLeaguesList.innerHTML = Array.from(selectedIds).map(id => {
+                    const league = leagueMap.get(id);
+                    if (!league) return '';
+                    return `
+                        <div class="selected-league-item">
+                            <div class="selected-league-info">
+                                <div class="selected-league-title-row">
+                                    <span class="selected-league-name">${league.name}</span>
+                                    <span class="selected-league-country">${league.country}</span>
+                                </div>
+                                <span class="selected-league-pool">${league.players_pool}</span>
+                            </div>
+                            <button type="button" class="remove-league-btn" data-remove-league="${league.id}" title="Remove ${league.name}">
+                                &times;
+                            </button>
+                        </div>
+                    `;
+                }).join('');
+
+                selectedLeaguesList.querySelectorAll('[data-remove-league]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const id = btn.getAttribute('data-remove-league');
+                        selectedIds.delete(id);
+                        renderSelectedLeagues();
+                    });
+                });
+
+                updateFinalSummary();
+            }
+
+            function addSelectedDropdownLeague() {
+                const chosenId = leagueDropdown.value;
+                if (chosenId && leagueMap.has(chosenId)) {
+                    selectedIds.add(chosenId);
+                    leagueDropdown.selectedIndex = 0;
+                    renderSelectedLeagues();
+                }
+            }
+
+            function updateFinalSummary() {
+                const bots = clampBots(botInput.value);
+                const count = selectedIds.size;
+                const botWord = bots === 1 ? 'AI bot' : 'AI bots';
+                if (count === 0) {
+                    finalConfigSummary.textContent = `${bots} ${botWord} (${bots + 1} total teams) • Please select at least 1 league player pool.`;
+                } else {
+                    const names = Array.from(selectedIds)
+                        .map(id => leagueMap.get(id)?.name)
+                        .filter(Boolean)
+                        .join(', ');
+                    finalConfigSummary.textContent = `${bots} ${botWord} (${bots + 1} total teams) • Players in play from: ${names}.`;
+                }
+            }
+
+            botInput.addEventListener('input', () => {
+                if (botInput.value !== '') {
+                    syncBotCount(botInput.value);
+                }
+            });
+            botInput.addEventListener('blur', () => syncBotCount(botInput.value));
+            botRange.addEventListener('input', () => syncBotCount(botRange.value));
+
+            botDecBtn.addEventListener('click', () => syncBotCount(clampBots(botInput.value) - 1));
+            botIncBtn.addEventListener('click', () => syncBotCount(clampBots(botInput.value) + 1));
+
+            leagueDropdown.addEventListener('change', addSelectedDropdownLeague);
+            addLeagueBtn.addEventListener('click', addSelectedDropdownLeague);
+
+            presetTop5Btn.addEventListener('click', () => {
+                ['39', '140', '135', '78', '61'].forEach(id => {
+                    if (leagueMap.has(id)) selectedIds.add(id);
+                });
+                renderSelectedLeagues();
+            });
+
+            presetAllBtn.addEventListener('click', () => {
+                availableLeagues.forEach(l => selectedIds.add(String(l.id)));
+                renderSelectedLeagues();
+            });
+
+            clearLeaguesBtn.addEventListener('click', () => {
+                selectedIds.clear();
+                renderSelectedLeagues();
+            });
+
+            createLeagueForm.addEventListener('submit', (e) => {
+                syncBotCount(botInput.value);
+                if (selectedIds.size === 0 && leagueDropdown.value) {
+                    selectedIds.add(leagueDropdown.value);
+                    renderSelectedLeagues();
+                }
+                if (selectedIds.size === 0) {
+                    e.preventDefault();
+                    leagueDropdown.focus();
+                    alert('Please select at least one league and its players from the dropdown list.');
+                }
+            });
+
+            syncBotCount(botInput.value);
+            renderSelectedLeagues();
+        })();
+    </script>
 
 </body>
 </html>

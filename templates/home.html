@@ -25,11 +25,15 @@
                 <div class="nav-links">
                     <a href="{{ url_for('index') }}" class="nav-link" style="color: #ffffff;">Dashboard</a>
                     <a href="#" class="nav-link">My Team</a>
-                    <a href="#" class="nav-link">Players</a>
-                    <a href="#" class="nav-link">League</a>
+                    <a href="#scouting-hub" class="nav-link">Players</a>
+                    <a href="{{ url_for('new_league') }}" class="nav-link">League</a>
                 </div>
 
                 <div class="flex items-center gap-4">
+                    <div id="shortlistCounterBadge" class="shortlist-pill" style="display: none;">
+                        <span class="shortlist-dot"></span>
+                        <span id="shortlistCountText">0 Call-Ups</span>
+                    </div>
                     <span style="font-size: 0.85rem; color: var(--apple-muted);">
                         @{{ current_user.username }}
                     </span>
@@ -60,7 +64,7 @@
                 </h1>
             </div>
 
-            <div class="bento-container" style="margin-bottom: 3rem;">
+            <div class="bento-container" style="margin-bottom: 2rem;">
                 <!-- Account Card -->
                 <div class="bento-card">
                     <div style="margin-bottom: 2rem;">
@@ -94,8 +98,124 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Players Shortlist Card -->
+            <div class="bento-card bento-shortlist-card" style="margin-bottom: 2rem;">
+                <div class="flex justify-between items-center" style="margin-bottom: 0.75rem;">
+                    <span class="card-tag tag-green">Watchlist</span>
+                    <span id="shortlistSubCount" class="shortlist-meta">0 Players Pinned</span>
+                </div>
+                <h3>Players Shortlist</h3>
+                <p>Pin standout players from the scouting search below to seed your draft board.</p>
+                <div id="shortlistTray" class="shortlist-tray">
+                    <div class="shortlist-empty">
+                        Search and click <strong>+ Call Up</strong> on any player profile to pin them here.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scouting Search Hub Bento -->
+            <section id="scouting-hub" class="scout-hub-bento">
+                <div class="scout-hub-glow"></div>
+                <div class="scout-header">
+                    <div>
+                        <span class="card-tag tag-purple">Global Player Database</span>
+                        <h2 class="scout-title">Scout Players</h2>
+                        <p class="scout-subtitle">Search live player profiles to inspect age, nationality, position, and contract value.</p>
+                    </div>
+                </div>
+
+                <!-- Search Bar Form (works with both standard GET submit and instant AJAX) -->
+                <form id="playerSearchForm" action="{{ url_for('index') }}" method="GET" class="scout-search-form" autocomplete="off">
+                    <div class="search-bar-glass">
+                        <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path>
+                        </svg>
+                        <input
+                            type="text"
+                            id="playerSearchInput"
+                            name="q"
+                            value="{{ search_query or '' }}"
+                            class="search-input"
+                            placeholder="Search any player by name (e.g., Messi, Bellingham, Mbappe)..."
+                            minlength="3"
+                            required
+                        >
+                        <button type="button" id="clearSearchBtn" class="search-clear-btn" title="Clear search" style="display: {% if search_query %}inline-flex{% else %}none{% endif %};">
+                            &times;
+                        </button>
+                        <button type="submit" id="searchSubmitBtn" class="btn-ultra search-submit-btn">
+                            <span id="searchBtnText">Scout Player</span>
+                            <span id="searchSpinner" class="search-spinner" style="display: none;"></span>
+                        </button>
+                    </div>
+
+                    <div class="quick-scout-row">
+                        <span class="quick-scout-label">Trending Call-Ups:</span>
+                        <button type="button" class="quick-chip" data-query="Messi">Lionel Messi</button>
+                        <button type="button" class="quick-chip" data-query="Mbappe">Kylian Mbappé</button>
+                        <button type="button" class="quick-chip" data-query="Haaland">Erling Haaland</button>
+                        <button type="button" class="quick-chip" data-query="Bellingham">Jude Bellingham</button>
+                        <button type="button" class="quick-chip" data-query="Salah">Mohamed Salah</button>
+                    </div>
+                </form>
+
+                <!-- Error Banner -->
+                <div id="searchErrorBanner" class="auth-alert auth-alert-danger" style="margin-top: 1.5rem; {% if not search_error %}display: none;{% endif %}">
+                    {{ search_error or '' }}
+                </div>
+            </section>
+
+            <!-- Dynamic Results Showcase -->
+            <section id="scoutingResultsSection" class="scouting-results-section" style="{% if not players %}display: none;{% endif %}">
+
+                <!-- Spotlight Player Dossier (Unique Featured Card) -->
+                <div id="playerSpotlightCard" class="spotlight-dossier-card">
+                    <!-- Populated dynamically or from initial server render -->
+                </div>
+
+                <!-- Filter & Results Bar -->
+                <div class="results-toolbar">
+                    <div class="results-count-wrap">
+                        <h3 class="results-heading">Scouting Report</h3>
+                        <span id="resultsCountBadge" class="results-count-badge">{{ players|length if players else 0 }} Profiles Found</span>
+                    </div>
+
+                    <div class="position-filters" id="positionFilters" role="tablist">
+                        <button type="button" class="filter-pill active" data-pos="all">All</button>
+                        <button type="button" class="filter-pill" data-pos="Attacker">Attackers</button>
+                        <button type="button" class="filter-pill" data-pos="Midfielder">Midfielders</button>
+                        <button type="button" class="filter-pill" data-pos="Defender">Defenders</button>
+                        <button type="button" class="filter-pill" data-pos="Goalkeeper">Goalkeepers</button>
+                    </div>
+                </div>
+
+                <!-- Player Bento Grid -->
+                <div id="playersBentoGrid" class="players-bento-grid">
+                    <!-- Populated via JS using server-provided or fetched playerRequest data -->
+                </div>
+            </section>
+
+            <!-- Empty State when a search returned 0 results -->
+            <div id="emptyResultsCard" class="bento-card text-center empty-scout-card" style="{% if not (search_query and not players and not search_error) %}display: none;{% endif %}">
+                <div class="empty-scout-icon">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"></path>
+                    </svg>
+                </div>
+                <h3>No Player Profiles Found</h3>
+                <p style="margin-inline: auto; max-width: 460px; margin-top: 0.5rem;">
+                    We couldn't find any players matching "<span id="emptyQueryText">{{ search_query or '' }}</span>". Try searching by last name or at least 3 characters.
+                </p>
+            </div>
         </div>
     </div>
 
+    <!-- Pass initial server-rendered players (if any) to JavaScript -->
+    <script id="initialPlayersData" type="application/json">
+        {{ (players or []) | tojson }}
+    </script>
+
+    <script src="{{ url_for('static', filename='js/home.js') }}"></script>
 </body>
 </html>
