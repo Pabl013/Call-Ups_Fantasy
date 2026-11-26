@@ -55,10 +55,13 @@
                 </p>
             </div>
 
-            <!-- League Configuration Form (Single Unified Card) -->
-            <form id="createLeagueForm" action="{{ url_for('new_league') }}" method="POST" class="league-config-form">
-                <div class="bento-card bento-create-card unified-league-card">
+           <!-- League Configuration Form (Single Unified Card) -->
+<form id="createLeagueForm" action="{{ url_for('new_league') }}" method="POST" class="league-config-form">
 
+    <!-- CSRF Protection -->
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <div class="bento-card bento-create-card unified-league-card">
                     <!-- Card Header -->
                     <div class="unified-card-header">
                         <div>

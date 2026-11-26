@@ -1,15 +1,46 @@
-import os, json, time, requests
-import http.client
+import os
+import json
+import requests
+
 from dotenv import load_dotenv
-from flask import Flask, render_template, redirect, url_for, request, jsonify, flash, session
+
+from flask import (
+    Flask,
+    render_template,
+    redirect,
+    url_for,
+    request,
+    jsonify,
+    flash,
+    session
+)
 from flask_sqlalchemy import SQLAlchemy
-from flask_security import Security, SQLAlchemyUserDatastore, auth_required, UserMixin, RoleMixin
+
+from flask_security import (
+    Security,
+    SQLAlchemyUserDatastore,
+    auth_required,
+    current_user,
+    UserMixin,
+    RoleMixin
+)
+
+from flask_wtf.csrf import CSRFProtect
+
+
+# ==================================================
+# LOAD ENVIRONMENT VARIABLES
+# ==================================================
 
 load_dotenv()
 
 app = Flask(__name__)
 
-# Configurations for Flask security
+
+# ==================================================
+# CONFIGURATIONS FOR FLASK SECURITY
+# ==================================================
+
 if not os.environ.get('SECRET_KEY') or not os.environ.get('SECURITY_PASSWORD_SALT'):
     raise RuntimeError(
         "Missing SECRET_KEY or SECURITY_PASSWORD_SALT environment variables. ")
@@ -25,79 +56,266 @@ HEADERS = {
 }
 
 app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
+
 app.config['SECURITY_USERNAME_ENABLE'] = True
 app.config['SECURITY_USERNAME_REQUIRED'] = True
+
 app.config['SECURITY_PASSWORD_SALT'] = os.environ['SECURITY_PASSWORD_SALT']
 app.config['SECURITY_PASSWORD_HASH'] = 'bcrypt'
-app.config['SECURITY_RECOVERABLE'] = False # For now. Fewer features for now is better
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///app.db')
+
+app.config['SECURITY_RECOVERABLE'] = False
+
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
+    'DATABASE_URL',
+    'sqlite:///app.db'
+)
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Flask-Security feature settings
+
+# ==================================================
+# FLASK SECURITY CONFIGURATION
+# ==================================================
+
 app.config['SECURITY_REGISTERABLE'] = True
-app.config['SECURITY_SEND_REGISTER_EMAIL'] = False # For now. Fewer features for now is better.
-app.config['SECURITY_EMAIL_VALIDATOR_ARGS'] = {'check_deliverability': False}
+
+app.config['SECURITY_SEND_REGISTER_EMAIL'] = False
+
+app.config['SECURITY_EMAIL_VALIDATOR_ARGS'] = {
+    'check_deliverability': False
+}
+
 
 # Security URLs
+
 app.config['SECURITY_LOGIN_URL'] = '/login'
 app.config['SECURITY_REGISTER_URL'] = '/signup'
 app.config['SECURITY_LOGOUT_URL'] = '/logout'
 
-# Security views
-app.config["SECURITY_LOGIN_USER_TEMPLATE"] = "login.html"
-app.config["SECURITY_REGISTER_USER_TEMPLATE"] = "signup.html"
 
-# Post security views
+# Security templates
+
+app.config['SECURITY_LOGIN_USER_TEMPLATE'] = 'login.html'
+app.config['SECURITY_REGISTER_USER_TEMPLATE'] = 'signup.html'
+
+
+# Redirects
+
 app.config['SECURITY_POST_LOGIN_VIEW'] = '/home'
+
 app.config['SECURITY_POST_LOGOUT_VIEW'] = '/'
+
 app.config['SECURITY_POST_REGISTER_VIEW'] = '/new-league'
+
 app.config['SECURITY_UNAUTHORIZED_VIEW'] = '/'
 
-# Initialize SQLAlchemy
+
+# ==================================================
+# DATABASE INITIALIZATION
+# ==================================================
+
 db = SQLAlchemy(app)
 
-# Define models
+
+# ==================================================
+# DATABASE MODELS
+# ==================================================
+
 roles_users = db.Table(
     'roles_users',
-    db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
-    db.Column('role_id', db.Integer(), db.ForeignKey('role.id'))
+
+    db.Column(
+        'user_id',
+        db.Integer(),
+        db.ForeignKey('user.id')
+    ),
+
+    db.Column(
+        'role_id',
+        db.Integer(),
+        db.ForeignKey('role.id')
+    )
 )
 
 
-class Role(db.Model, RoleMixin):
-    id = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String(80), unique=True, nullable=False)
-    description = db.Column(db.String(255))
-    users = db.relationship('User', secondary=roles_users, back_populates='roles')
+# ==================================================
+# ROLE MODEL
+# ==================================================
 
+class Role(db.Model, RoleMixin):
+
+    id = db.Column(
+        db.Integer(),
+        primary_key=True
+    )
+
+    name = db.Column(
+        db.String(80),
+        unique=True,
+        nullable=False
+    )
+
+    description = db.Column(
+        db.String(255)
+    )
+
+    users = db.relationship(
+        'User',
+        secondary=roles_users,
+        back_populates='roles'
+    )
+
+
+# ==================================================
+# USER MODEL
+# ==================================================
 
 class User(db.Model, UserMixin):
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(255), unique=True, nullable=False)
-    username = db.Column(db.String(255), unique=True, nullable=False)
-    password = db.Column(db.String(255), nullable=True)
-    active = db.Column(db.Boolean(), nullable=False)
-    fs_uniquifier = db.Column(db.String(64), unique=True, nullable=False)
-    roles = db.relationship('Role', secondary=roles_users, back_populates='users')
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    email = db.Column(
+        db.String(255),
+        unique=True,
+        nullable=False
+    )
+
+    username = db.Column(
+        db.String(255),
+        unique=True,
+        nullable=False
+    )
+
+    password = db.Column(
+        db.String(255),
+        nullable=True
+    )
+
+    active = db.Column(
+        db.Boolean(),
+        nullable=False
+    )
+
+    fs_uniquifier = db.Column(
+        db.String(64),
+        unique=True,
+        nullable=False
+    )
+
+    roles = db.relationship(
+        'Role',
+        secondary=roles_users,
+        back_populates='users'
+    )
+
+    # Relationship between User and League
+
+    leagues = db.relationship(
+        'League',
+        back_populates='creator'
+    )
 
 
-# Setup Flask-Security
-user_datastore = SQLAlchemyUserDatastore(db, User, Role)
-security = Security(app, user_datastore)
+# ==================================================
+# LEAGUE MODEL
+# ==================================================
 
-# Create database tables
+class League(db.Model):
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    name = db.Column(
+        db.String(100),
+        nullable=False
+    )
+
+    number_of_bots = db.Column(
+        db.Integer,
+        default=0,
+        nullable=False
+    )
+
+    football_leagues = db.Column(
+        db.JSON,
+        nullable=False
+    )
+
+    creator_id = db.Column(
+        db.Integer,
+        db.ForeignKey('user.id'),
+        nullable=False
+    )
+
+    creator = db.relationship(
+        'User',
+        back_populates='leagues'
+    )
+
+
+# ==================================================
+# FLASK SECURITY INITIALIZATION
+# ==================================================
+
+user_datastore = SQLAlchemyUserDatastore(
+    db,
+    User,
+    Role
+)
+
+security = Security(
+    app,
+    user_datastore
+)
+
+
+# ==================================================
+# CSRF PROTECTION
+# ==================================================
+
+csrf = CSRFProtect(app)
+
+
+# ==================================================
+# CREATE DATABASE TABLES
+# ==================================================
+
 with app.app_context():
+
     db.create_all()
 
 
+# ==================================================
+# LANDING PAGE
+# ==================================================
+
 @app.route('/')
 def landingPage():
+
     return render_template('index.html')
 
 
+# ==================================================
+# REGISTER REDIRECT
+# ==================================================
+
 @app.route('/register')
 def register_redirect():
-    return redirect(url_for('security.register'))
+
+
+    return redirect(
+        url_for('security.register')
+    )
+
+
+
+
+
 
 AVAILABLE_LEAGUES = [
     {"id": "39", "name": "Premier League", "country": "England", "players_pool": "20 Clubs • All Premier League Squads"},
@@ -120,6 +338,7 @@ def new_league():
     existing_config = session.get("league_config", {})
     bot_count = existing_config.get("bot_count", 7)
     selected_league_ids = [str(l["id"]) for l in existing_config.get("leagues", [])] or ["39"]
+
 
     if request.method == 'POST':
         raw_bot_count = (request.form.get('bot_count') or '').strip()
@@ -197,6 +416,7 @@ def api_player_search():
 @app.route('/home', methods=['GET', 'POST'])
 @auth_required()
 def index():
+
     search_query = (request.values.get('q') or request.values.get('player_name') or '').strip()
     players = []
     search_error = None
@@ -338,6 +558,9 @@ def playerRequestByID(id: str):
     return player_info
 
 
+# ==================================================
+# RUN APPLICATION
+# ==================================================
+
 if __name__ == '__main__':
-    debug_mode = os.environ.get('FLASK_DEBUG', '0').lower() in ('1', 'true', 'yes')
-    app.run(debug=debug_mode)
+    app.run(debug=True)
