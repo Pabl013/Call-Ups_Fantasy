@@ -61,6 +61,8 @@
     <!-- CSRF Protection -->
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
+ 
+
     <div class="bento-card bento-create-card unified-league-card">
                     <!-- Card Header -->
                     <div class="unified-card-header">
@@ -78,6 +80,32 @@
                             </span>
                         </div>
                     </div>
+
+                    <!-- League Name Section -->
+<div class="league-name-container">
+
+    <h4 class="unified-section-title">League Name</h4>
+
+    <p class="unified-section-desc">
+        Choose a name for your fantasy league.
+    </p>
+
+    <label for="leagueName" class="form-field-label">
+        Your League Name
+    </label>
+
+    <input
+        type="text"
+        id="leagueName"
+        name="league_name"
+        class="league-name-input"
+        placeholder="Enter your league name"
+        value="{{ league_name | default('') }}"
+        maxlength="100"
+        required
+    >
+
+</div>
 
                     <div class="unified-card-grid">
                         <!-- Section 1: Bot Count (1 to 15) -->

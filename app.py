@@ -334,70 +334,135 @@ AVAILABLE_LEAGUES = [
 @app.route('/new-league', methods=['GET', 'POST'])
 @auth_required()
 def new_league():
-    league_lookup = {league["id"]: league for league in AVAILABLE_LEAGUES}
+
+    league_lookup = {
+        league["id"]: league for league in AVAILABLE_LEAGUES
+    }
+
     existing_config = session.get("league_config", {})
     bot_count = existing_config.get("bot_count", 7)
-    selected_league_ids = [str(l["id"]) for l in existing_config.get("leagues", [])] or ["39"]
 
+    selected_league_ids = [
+        str(l["id"]) for l in existing_config.get("leagues", [])
+    ] or ["39"]
 
     if request.method == 'POST':
+
+        # Get information from the HTML form
+        league_name = (request.form.get('league_name') or '').strip()
         raw_bot_count = (request.form.get('bot_count') or '').strip()
+
         submitted_leagues = request.form.getlist('leagues')
-        dropdown_fallback = (request.form.get('league_dropdown') or '').strip()
+
+        dropdown_fallback = (
+            request.form.get('league_dropdown') or ''
+        ).strip()
+
         if not submitted_leagues and dropdown_fallback:
             submitted_leagues = [dropdown_fallback]
 
-        # Deduplicate while preserving order and filtering to valid league IDs
+        # Remove duplicate and invalid league IDs
         valid_selected_ids = []
+
         for lid in submitted_leagues:
             if lid in league_lookup and lid not in valid_selected_ids:
                 valid_selected_ids.append(lid)
 
         errors = []
+
+        # Validate the league name
+        if not league_name:
+            errors.append("Please enter a league name.")
+
+        elif len(league_name) > 100:
+            errors.append("League name cannot exceed 100 characters.")
+
+        # Validate the number of bots
         try:
             bot_count_val = int(raw_bot_count)
+
             if not (1 <= bot_count_val <= 15):
                 errors.append("Number of bots must be between 1 and 15.")
             else:
                 bot_count = bot_count_val
-        except ValueError:
-            errors.append("Please enter a valid number of bots between 1 and 15.")
 
+        except ValueError:
+            errors.append(
+                "Please enter a valid number of bots between 1 and 15."
+            )
+
+        # Validate selected football leagues
         if not valid_selected_ids:
-            errors.append("Please select at least one league from the dropdown list.")
+            errors.append(
+                "Please select at least one league from the dropdown list."
+            )
         else:
             selected_league_ids = valid_selected_ids
 
+        # Display validation errors
         if errors:
+
             for err in errors:
                 flash(err, 'error')
+
             return render_template(
                 'newLeague.html',
                 available_leagues=AVAILABLE_LEAGUES,
                 bot_count=bot_count,
-                selected_league_ids=selected_league_ids
+                selected_league_ids=selected_league_ids,
+                league_name=league_name
             )
 
-        selected_leagues = [league_lookup[lid] for lid in valid_selected_ids]
+        # Get the selected football leagues
+        selected_leagues = [
+            league_lookup[lid] for lid in valid_selected_ids
+        ]
+
+        # Create a new fantasy league
+        created_league = League(
+            name=league_name,
+            number_of_bots=bot_count,
+            football_leagues=selected_leagues,
+            creator_id=current_user.id
+        )
+
+        # Save the league permanently in the database
+        db.session.add(created_league)
+        db.session.commit()
+
+        # Save the current league configuration in the session
         session['league_config'] = {
+            'league_id': created_league.id,
+            'league_name': league_name,
             'bot_count': bot_count,
             'leagues': selected_leagues
         }
-        league_names = ", ".join(f"{l['name']} ({l['country']})" for l in selected_leagues)
+
+        # Prepare the confirmation message
+        league_names = ", ".join(
+            f"{l['name']} ({l['country']})"
+            for l in selected_leagues
+        )
+
         bot_label = "bot" if bot_count == 1 else "bots"
+
         flash(
-            f"League created with {bot_count} {bot_label} ({bot_count + 1} total teams) and active player pools from: {league_names}.",
+            f"League '{league_name}' created successfully with "
+            f"{bot_count} {bot_label} ({bot_count + 1} total teams) "
+            f"and active player pools from: {league_names}.",
             'info'
         )
+
         return redirect(url_for('index'))
 
+    # Display the league creation page
     return render_template(
         'newLeague.html',
         available_leagues=AVAILABLE_LEAGUES,
         bot_count=bot_count,
-        selected_league_ids=selected_league_ids
+        selected_league_ids=selected_league_ids,
+        league_name=''
     )
-
 
 @app.route('/api/players/search')
 @auth_required()
