@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Leagues | Call-Ups Fantasy</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/league.css') }}">
+
+</head>
+
+<body>
+
+    <header>
+
+        <h1>Call-Ups Fantasy</h1>
+
+        <nav>
+            <a href="{{ url_for('index') }}">Dashboard</a>
+            <a href="{{ url_for('my_team') }}">My Team</a>
+            <a href="{{ url_for('league_dashboard') }}">League</a>
+            <a href="{{ url_for('new_league') }}">Create League</a>
+        </nav>
+
+    </header>
+
+    <main>
+
+        <div class="page-heading">
+
+            <div>
+                <h1>My Leagues</h1>
+                <p>View and manage your fantasy football leagues.</p>
+            </div>
+
+            <a href="{{ url_for('new_league') }}" class="create-btn">
+                + Create League
+            </a>
+
+        </div>
+
+        {% if leagues %}
+
+            <div class="leagues-container">
+
+                {% for league in leagues %}
+
+                    <article class="league-card">
+
+                        <h2>{{ league.name }}</h2>
+
+                        <!-- League information -->
+
+                        <div class="league-stats">
+
+                            <div class="stat">
+                                <h3>Total Teams</h3>
+                                <p>{{ league.teams | length }}</p>
+                            </div>
+
+                            <div class="stat">
+                                <h3>Configured Bots</h3>
+                                <p>{{ league.number_of_bots }}</p>
+                            </div>
+
+                            <div class="stat">
+                                <h3>Football Leagues</h3>
+                                <p>{{ league.football_leagues | length }}</p>
+                            </div>
+
+                        </div>
+
+                        <!-- Selected football leagues -->
+
+                        <section class="football-leagues">
+
+                            <h3>Selected Football Leagues</h3>
+
+                            <div class="league-tags">
+
+                                {% for football_league in league.football_leagues %}
+
+                                    <span class="league-tag">
+
+                                        {% if football_league is mapping %}
+                                            {{ football_league.name }}
+                                        {% else %}
+                                            {{ football_league }}
+                                        {% endif %}
+
+                                    </span>
+
+                                {% endfor %}
+
+                            </div>
+
+                        </section>
+
+                        <!-- Participating teams -->
+
+                        <section class="participating-teams">
+
+                            <h3>Participating Teams</h3>
+
+                            {% if league.teams %}
+
+                                <table>
+
+                                    <thead>
+                                        <tr>
+                                            <th>Team Name</th>
+                                            <th>Type</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+
+                                        {% for team in league.teams %}
+
+                                            <tr>
+
+                                                <td>{{ team.name }}</td>
+
+                                                <td>
+
+                                                    {% if team.is_bot %}
+
+                                                        <span class="bot-badge">
+                                                            Bot
+                                                        </span>
+
+                                                    {% else %}
+
+                                                        <span class="human-badge">
+                                                            Human
+                                                        </span>
+
+                                                    {% endif %}
+
+                                                </td>
+
+                                            </tr>
+
+                                        {% endfor %}
+
+                                    </tbody>
+
+                                </table>
+
+                            {% else %}
+
+                                <p>No teams have been created for this league yet.</p>
+
+                            {% endif %}
+
+                        </section>
+
+                        <!-- Future standings section -->
+
+                        <section class="standings-section">
+
+                            <h3>League Standings</h3>
+
+                            <p>Standings will be available once the scoring system is active.</p>
+
+                        </section>
+
+                    </article>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-state">
+
+                <h2>No leagues yet</h2>
+
+                <p>Create your first fantasy football league.</p>
+
+                <a href="{{ url_for('new_league') }}" class="create-btn">
+                    Create League
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Call-Ups Fantasy</p>
+    </footer>
+
+</body>
+
+</html>

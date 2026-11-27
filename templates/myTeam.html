@@ -18,11 +18,19 @@
     <header>
         <h1>Call-Ups Fantasy</h1>
 
-        <nav>
-            <a href="{{ url_for('index') }}">Home</a>
-            <a href="{{ url_for('my_team') }}">My Team</a>
-            <a href="{{ url_for('new_league') }}">Create League</a>
-        </nav>
+       <nav>
+
+    <a href="{{ url_for('index') }}">Dashboard</a>
+
+    <a href="{{ url_for('my_team') }}">My Team</a>
+
+    <a href="{{ url_for('league_dashboard') }}">League</a>
+
+    <a href="{{ url_for('new_league') }}">Create League</a>
+
+</nav>
+
+
     </header>
 
     <main>

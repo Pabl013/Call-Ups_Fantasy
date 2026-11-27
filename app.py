@@ -643,6 +643,26 @@ def rename_team(team_id):
     return redirect(url_for('my_team'))
 
 
+# ==================================================
+# LEAGUE DASHBOARD
+# ==================================================
+
+@app.route('/league')
+@auth_required()
+def league_dashboard():
+
+    # Get all leagues created by the current user
+    leagues = League.query.filter_by(
+        creator_id=current_user.id
+    ).all()
+
+    # Display the league dashboard
+    return render_template(
+        'league.html',
+        leagues=leagues
+    )
+
+
 # API JSON cache
 CACHE_FILE = "api_cache.json"
 
