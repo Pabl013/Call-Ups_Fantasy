@@ -1,0 +1,237 @@
+/* General page style */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #0b1120;
+    color: #ffffff;
+}
+
+/* Header and navigation */
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 20px 5%;
+    background: #111827;
+    border-bottom: 1px solid #263247;
+}
+
+header h1 {
+    font-size: 24px;
+    margin: 0;
+}
+
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px;
+}
+
+nav a {
+    color: #a1aab8;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+nav a:hover {
+    color: #2997ff;
+}
+
+/* Main content */
+
+main {
+    max-width: 1200px;
+    min-height: 80vh;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+main h1 {
+    font-size: 36px;
+    margin-bottom: 10px;
+}
+
+main p {
+    color: #a1aab8;
+    line-height: 1.6;
+}
+
+/* Teams grid */
+
+.teams-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    margin-top: 35px;
+}
+
+/* Individual team card */
+
+.team-card {
+    background: #151e2e;
+    border: 1px solid #263247;
+    border-radius: 18px;
+    padding: 25px;
+    transition: transform 0.3s, border-color 0.3s;
+}
+
+.team-card:hover {
+    transform: translateY(-5px);
+    border-color: #2997ff;
+}
+
+.team-card h2 {
+    color: #2997ff;
+    margin-top: 0;
+    font-size: 26px;
+}
+
+/* Squad section */
+
+.squad-section {
+    margin-top: 25px;
+    padding: 20px;
+    background: #0b1120;
+    border-radius: 12px;
+    border: 1px solid #263247;
+}
+
+.squad-section h3 {
+    margin-top: 0;
+}
+
+/* Empty state */
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    background: #151e2e;
+    border-radius: 18px;
+    margin-top: 35px;
+}
+
+.empty-state a {
+    display: inline-block;
+    padding: 12px 25px;
+    margin-top: 15px;
+    background: #2997ff;
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+.empty-state a:hover {
+    background: #0077ed;
+}
+
+/* Footer */
+
+footer {
+    text-align: center;
+    padding: 20px;
+    color: #a1aab8;
+    border-top: 1px solid #263247;
+}
+
+/* Responsive design */
+
+@media (max-width: 768px) {
+
+    header {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    nav {
+        justify-content: center;
+        gap: 15px;
+    }
+
+    main h1 {
+        font-size: 28px;
+    }
+
+    .teams-container {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+/* Edit team name form */
+
+.rename-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 20px 0;
+}
+
+.rename-form label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #a1aab8;
+}
+
+.rename-form input {
+    width: 100%;
+    padding: 12px 15px;
+    background: #0b1120;
+    color: white;
+    border: 1px solid #263247;
+    border-radius: 10px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.rename-form input:focus {
+    outline: none;
+    border-color: #2997ff;
+}
+
+/* Save name button */
+
+.save-btn {
+    padding: 12px 20px;
+    background: #2997ff;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.save-btn:hover {
+    background: #0077ed;
+}
+
+/* Flash messages */
+
+.flash-message {
+    padding: 16px 20px;
+    margin: 20px 0;
+    border-radius: 12px;
+    font-size: 15px;
+}
+
+.flash-message.info {
+    background: rgba(52, 199, 89, 0.12);
+    border: 1px solid #34c759;
+    color: #34c759;
+}
+
+.flash-message.error {
+    background: rgba(255, 69, 58, 0.12);
+    border: 1px solid #ff453a;
+    color: #ff453a;
+}

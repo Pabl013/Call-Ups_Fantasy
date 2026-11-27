@@ -584,6 +584,65 @@ def index():
         search_error=search_error
     )
 
+
+# ==================================================
+# MY TEAM PAGE
+# ==================================================
+
+@app.route('/my-team')
+@auth_required()
+def my_team():
+
+    # Get all teams owned by the current user
+    teams = Team.query.filter_by(
+        user_id=current_user.id,
+        is_bot=False
+    ).all()
+
+    return render_template(
+        'myTeam.html',
+        teams=teams
+    )
+
+
+# ==================================================
+# EDIT TEAM NAME
+# ==================================================
+
+@app.route('/my-team/<int:team_id>/rename', methods=['POST'])
+@auth_required()
+def rename_team(team_id):
+
+    # Find the team owned by the current user
+    team = Team.query.filter_by(
+        id=team_id,
+        user_id=current_user.id,
+        is_bot=False
+    ).first_or_404()
+
+    # Get the new team name from the form
+    new_name = (request.form.get('team_name') or '').strip()
+
+    # Validate the new team name
+    if not new_name:
+        flash("Please enter a team name.", "error")
+
+    elif len(new_name) > 100:
+        flash("Team name cannot exceed 100 characters.", "error")
+
+    else:
+
+        # Update the team name
+        team.name = new_name
+
+        # Save the changes in the database
+        db.session.commit()
+
+        flash("Team name updated successfully!", "info")
+
+    return redirect(url_for('my_team'))
+
+
 # API JSON cache
 CACHE_FILE = "api_cache.json"
 

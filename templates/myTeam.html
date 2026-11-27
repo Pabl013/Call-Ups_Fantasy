@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Team | Call-Ups Fantasy</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/myTeam.css') }}">
+
+</head>
+
+<body>
+
+    <header>
+        <h1>Call-Ups Fantasy</h1>
+
+        <nav>
+            <a href="{{ url_for('index') }}">Home</a>
+            <a href="{{ url_for('my_team') }}">My Team</a>
+            <a href="{{ url_for('new_league') }}">Create League</a>
+        </nav>
+    </header>
+
+    <main>
+
+        <h1>My Teams</h1>
+
+        <p>View and manage your fantasy football teams.</p>
+
+        <!-- Flash messages -->
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+
+    {% if messages %}
+
+        {% for category, message in messages %}
+
+            <div class="flash-message {{ category }}">
+                {{ message }}
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+{% endwith %}
+
+        {% if teams %}
+
+            <div class="teams-container">
+
+                {% for team in teams %}
+
+                    <article class="team-card">
+
+                        <h2>{{ team.name }}</h2>
+
+                        <!-- Edit team name form -->
+
+<form action="{{ url_for('rename_team', team_id=team.id) }}"
+      method="POST"
+      class="rename-form">
+
+    <input type="hidden"
+           name="csrf_token"
+           value="{{ csrf_token() }}">
+
+    <label for="team-name-{{ team.id }}">
+        Edit Team Name
+    </label>
+
+    <input type="text"
+           id="team-name-{{ team.id }}"
+           name="team_name"
+           value="{{ team.name }}"
+           maxlength="100"
+           required>
+
+    <button type="submit" class="save-btn">
+        Save Name
+    </button>
+
+</form>
+
+                        <p>League: {{ team.league.name }}</p>
+
+                        <p>Number of Bots: {{ team.league.number_of_bots }}</p>
+
+                        <p>Total Teams: {{ team.league.teams | length }}</p>
+
+                        <div class="squad-section">
+
+                            <h3>My Squad</h3>
+
+                            <p>Squad management will be available after the draft.</p>
+
+                        </div>
+
+                    </article>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-state">
+
+                <h2>No teams yet</h2>
+
+                <p>Create a fantasy league to get your first team.</p>
+
+                <a href="{{ url_for('new_league') }}">Create League</a>
+
+            </div>
+
+        {% endif %}
+
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Call-Ups Fantasy</p>
+    </footer>
+
+</body>
+
+</html>
