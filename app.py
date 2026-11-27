@@ -662,6 +662,15 @@ def league_dashboard():
         leagues=leagues
     )
 
+# ==================================================
+# PRIVACY POLICY
+# ==================================================
+
+@app.route('/privacy')
+def privacy_policy():
+
+    return render_template('privacy.html')
+
 
 # API JSON cache
 CACHE_FILE = "api_cache.json"

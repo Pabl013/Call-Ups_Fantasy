@@ -1,0 +1,164 @@
+/* General page style */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #0b1120;
+    color: white;
+}
+
+/* Header and navigation */
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 20px 5%;
+    background: #111827;
+    border-bottom: 1px solid #263247;
+}
+
+header h1 {
+    font-size: 24px;
+    margin: 0;
+}
+
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px;
+}
+
+nav a {
+    color: #a1aab8;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+nav a:hover {
+    color: #2997ff;
+}
+
+/* Main privacy container */
+
+.privacy-container {
+    max-width: 1000px;
+    min-height: 80vh;
+    margin: 50px auto;
+    padding: 20px;
+}
+
+/* Page heading */
+
+.privacy-heading {
+    margin-bottom: 40px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid #263247;
+}
+
+.privacy-heading h1 {
+    font-size: 42px;
+    color: #2997ff;
+    margin-bottom: 15px;
+}
+
+.privacy-heading p {
+    color: #a1aab8;
+    font-size: 14px;
+}
+
+/* Privacy policy sections */
+
+section {
+    background: #151e2e;
+    border: 1px solid #263247;
+    border-radius: 16px;
+    padding: 30px;
+    margin-bottom: 20px;
+    transition: border-color 0.3s;
+}
+
+section:hover {
+    border-color: #2997ff;
+}
+
+section h2 {
+    color: #2997ff;
+    font-size: 23px;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+section p {
+    color: #c5cbd5;
+    font-size: 16px;
+    line-height: 1.8;
+}
+
+section ul {
+    padding-left: 25px;
+}
+
+section li {
+    color: #c5cbd5;
+    font-size: 16px;
+    line-height: 1.8;
+    margin-bottom: 10px;
+}
+
+section li::marker {
+    color: #2997ff;
+}
+
+/* Footer */
+
+footer {
+    text-align: center;
+    padding: 25px;
+    color: #a1aab8;
+    border-top: 1px solid #263247;
+}
+
+/* Responsive design */
+
+@media (max-width: 768px) {
+
+    header {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    nav {
+        justify-content: center;
+        gap: 15px;
+    }
+
+    .privacy-container {
+        margin: 20px auto;
+        padding: 15px;
+    }
+
+    .privacy-heading h1 {
+        font-size: 32px;
+    }
+
+    section {
+        padding: 20px;
+    }
+
+    section h2 {
+        font-size: 20px;
+    }
+
+    section p,
+    section li {
+        font-size: 15px;
+    }
+
+}

@@ -10,8 +10,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Stylesheet -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/signup.css') }}">
+    <!-- Stylesheets -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/signup.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+
 </head>
 <body>
 
@@ -150,21 +152,33 @@
                     <ul>
                         <li><a href="#">Newsroom</a></li>
                         <li><a href="#">Careers</a></li>
-                        <li><a href="#">Privacy</a></li>
+                        <li><a href="{{ url_for('privacy_policy') }}" class="privacy-link"> Privacy Policy</a></li>
                     </ul>
                 </div>
             </div>
             
-            <div class="footer-bottom">
-                <p>Copyright © 2026 Call-Ups Inc. All rights reserved.</p>
-                <div class="footer-legal-links">
-                    <a href="#">Privacy Policy</a>
-                    <span class="divider"></span>
-                    <a href="#">Terms of Use</a>
-                    <span class="divider"></span>
-                    <a href="#">Legal</a>
-                </div>
-            </div>
+           <div class="footer-bottom">
+
+    <p>Copyright &copy; 2026 Call-Ups Fantasy. All rights reserved.</p>
+
+    <div class="footer-legal-links">
+
+        <a href="{{ url_for('privacy_policy') }}" class="privacy-link">
+            Privacy Policy
+        </a>
+
+        <span class="divider"></span>
+
+        <a href="#">Terms of Use</a>
+
+        <span class="divider"></span>
+
+        <a href="#">Legal</a>
+
+    </div>
+
+</div>
+
         </div>
     </footer>
 

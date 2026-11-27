@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Privacy Policy | Call-Ups Fantasy</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/privacy.css') }}">
+
+</head>
+
+<body>
+
+    <header>
+
+        <h1>Call-Ups Fantasy</h1>
+
+        <nav>
+
+            <a href="{{ url_for('landingPage') }}">Home</a>
+
+            {% if current_user.is_authenticated %}
+
+                <a href="{{ url_for('index') }}">Dashboard</a>
+
+            {% else %}
+
+                <a href="{{ url_for('security.login') }}">Login</a>
+
+                <a href="{{ url_for('security.register') }}">Sign Up</a>
+
+            {% endif %}
+
+        </nav>
+
+    </header>
+
+    <main class="privacy-container">
+
+        <div class="privacy-heading">
+
+            <h1>Privacy Policy</h1>
+
+            <p>Last updated: November 27, 2026</p>
+
+        </div>
+
+        <section>
+
+            <h2>1. Introduction</h2>
+
+            <p>
+                Call-Ups Fantasy is a fantasy football web application
+                developed as part of the SOEN 287 course at Concordia
+                University.
+            </p>
+
+            <p>
+                This Privacy Policy explains what information our
+                application collects, how it is used, and how it is stored.
+            </p>
+
+        </section>
+
+        <section>
+
+            <h2>2. Information We Collect</h2>
+
+            <p>Our application collects the following information:</p>
+
+            <ul>
+                <li>Username and email address.</li>
+                <li>Account authentication information.</li>
+                <li>Fantasy league names and configurations.</li>
+                <li>Team names and team ownership information.</li>
+                <li>Session information.</li>
+                <li>Football player search queries.</li>
+            </ul>
+
+        </section>
+
+        <section>
+
+            <h2>3. How We Use Your Information</h2>
+
+            <p>We use this information to:</p>
+
+            <ul>
+                <li>Create and manage user accounts.</li>
+                <li>Authenticate users.</li>
+                <li>Create and manage fantasy football leagues.</li>
+                <li>Store and display fantasy teams.</li>
+                <li>Provide football player search functionality.</li>
+                <li>Maintain user sessions.</li>
+            </ul>
+
+        </section>
+
+        <section>
+
+            <h2>4. Data Storage and Security</h2>
+
+            <p>
+                Account, league, and team information is stored in
+                a database managed using SQLAlchemy.
+            </p>
+
+            <p>
+                Passwords are hashed using bcrypt rather than stored
+                as plain text.
+            </p>
+
+            <p>
+                The application uses authentication, access controls,
+                and CSRF protection to help protect user information.
+                However, no system can guarantee complete security.
+            </p>
+
+        </section>
+
+        <section>
+
+            <h2>5. Cookies and Sessions</h2>
+
+            <p>
+                Call-Ups Fantasy uses session cookies to maintain
+                user authentication and store session information.
+            </p>
+
+            <p>
+                These cookies support essential application
+                functionality, including account access and league
+                configuration.
+            </p>
+
+        </section>
+
+        <section>
+
+            <h2>6. Third-Party Services</h2>
+
+            <p>
+                Our application uses API-Football to retrieve
+                football player information.
+            </p>
+
+            <p>
+                Player search terms and player identifiers may be
+                sent to this external service to retrieve results.
+                The player search functionality does not include
+                account passwords or email addresses in these requests.
+            </p>
+
+            <p>
+                Retrieved player information and search terms may
+                also be cached locally to reduce repeated API requests.
+            </p>
+
+            <p>
+                 Some pages use external fonts and images.
+                 Loading these resources may share technical information,
+                 such as your IP address, with third-party providers.
+             </p>
+
+        </section>
+
+        <section>
+
+            <h2>7. Data Retention and User Controls</h2>
+
+            <p>
+                Account, league, and team information is retained
+                in the application database.
+            </p>
+
+            <p>
+                Users can currently update their fantasy team names.
+                Automated account deletion and data export features
+                are not currently available.
+            </p>
+
+        </section>
+
+        <section>
+
+            <h2>8. Changes to This Privacy Policy</h2>
+
+            <p>
+                This Privacy Policy may be updated as new
+                functionalities are added to Call-Ups Fantasy.
+            </p>
+
+        </section>
+
+        <section>
+
+            <h2>9. Contact</h2>
+
+            <p>
+                Call-Ups Fantasy is an academic software project
+                developed for SOEN 287 at Concordia University.
+            </p>
+
+            <p>
+                A dedicated privacy contact has not yet been established.
+            </p>
+
+        </section>
+
+    </main>
+
+    <footer>
+
+        <p>&copy; 2026 Call-Ups Fantasy</p>
+
+    </footer>
+
+</body>
+
+</html>

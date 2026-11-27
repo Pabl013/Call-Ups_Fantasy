@@ -8,8 +8,12 @@
 
     <title>My Leagues | Call-Ups Fantasy</title>
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/league.css') }}">
+   <link rel="stylesheet"
+      href="{{ url_for('static', filename='css/league.css') }}">
+
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/common.css') }}">
+      
 
 </head>
 
@@ -194,8 +198,14 @@
     </main>
 
     <footer>
-        <p>&copy; 2026 Call-Ups Fantasy</p>
-    </footer>
+
+    <p>&copy; 2026 Call-Ups Fantasy</p>
+
+    <a href="{{ url_for('privacy_policy') }}" class="privacy-link">
+        Privacy Policy
+    </a>
+
+</footer>
 
 </body>
 

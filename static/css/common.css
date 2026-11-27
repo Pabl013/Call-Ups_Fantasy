@@ -1,0 +1,27 @@
+/* Privacy Policy link */
+
+.privacy-link {
+    display: inline-block;
+    color: #2997ff;
+    font-size: 14px;
+    text-decoration: none;
+    margin-top: 10px;
+    transition: color 0.3s;
+}
+
+.privacy-link:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+/* Align footer legal links */
+
+.footer-legal-links {
+    display: flex;
+    align-items: center;
+}
+
+.footer-legal-links .privacy-link {
+    margin-top: 0;
+    font-size: inherit;
+}
