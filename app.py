@@ -218,6 +218,13 @@ class User(db.Model, UserMixin):
         back_populates='creator'
     )
 
+    # Relationship between User and Team
+
+    teams = db.relationship(
+        'Team',
+        back_populates='owner'
+    )
+
 
 # ==================================================
 # LEAGUE MODEL
@@ -257,6 +264,57 @@ class League(db.Model):
         back_populates='leagues'
     )
 
+    # Relationship between League and Team
+
+    teams = db.relationship(
+        'Team',
+        back_populates='league'
+    )
+
+
+# ==================================================
+# TEAM MODEL
+# ==================================================
+
+class Team(db.Model):
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    name = db.Column(
+        db.String(100),
+        nullable=False
+    )
+
+    league_id = db.Column(
+        db.Integer,
+        db.ForeignKey('league.id'),
+        nullable=False
+    )
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey('user.id'),
+        nullable=True
+    )
+
+    is_bot = db.Column(
+        db.Boolean,
+        default=False,
+        nullable=False
+    )
+
+    league = db.relationship(
+        'League',
+        back_populates='teams'
+    )
+
+    owner = db.relationship(
+        'User',
+        back_populates='teams'
+    )
 
 # ==================================================
 # FLASK SECURITY INITIALIZATION
@@ -426,8 +484,33 @@ def new_league():
             creator_id=current_user.id
         )
 
-        # Save the league permanently in the database
+        # Add the new league to the database session
         db.session.add(created_league)
+        db.session.flush()
+
+        # Create the human team
+        human_team = Team(
+            name="My Team",
+            league_id=created_league.id,
+            user_id=current_user.id,
+            is_bot=False
+        )
+
+        db.session.add(human_team)
+
+        # Create bot teams
+        for i in range(bot_count):
+
+            bot_team = Team(
+                name=f"Bot FC {i + 1}",
+                league_id=created_league.id,
+                user_id=None,
+                is_bot=True
+            )
+
+            db.session.add(bot_team)
+
+        # Save the league and all teams permanently
         db.session.commit()
 
         # Save the current league configuration in the session
