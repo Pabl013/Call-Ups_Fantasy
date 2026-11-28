@@ -2,6 +2,7 @@ import os
 import json
 import requests
 import re
+from sqlalchemy import inspect, text
 
 from dotenv import load_dotenv
 
@@ -347,12 +348,41 @@ csrf = CSRFProtect(app)
 
 
 # ==================================================
-# CREATE DATABASE TABLES
+# CREATE AND UPDATE DATABASE TABLES
 # ==================================================
 
 with app.app_context():
 
     db.create_all()
+
+    # Check the existing SQLite database structure
+    if db.engine.dialect.name == "sqlite":
+
+        inspector = inspect(db.engine)
+
+        team_columns = [
+            column["name"]
+            for column in inspector.get_columns("team")
+        ]
+
+        # Add the logo_color column if missing
+        if "logo_color" not in team_columns:
+
+            db.session.execute(
+                text(
+                    "ALTER TABLE team "
+                    "ADD COLUMN logo_color VARCHAR(7) "
+                    "NOT NULL DEFAULT '#2997ff'"
+                )
+            )
+
+            db.session.commit()
+
+            print("Database migration completed.")
+
+        else:
+
+            print("Database schema is up to date.")
 
 
 # ==================================================
