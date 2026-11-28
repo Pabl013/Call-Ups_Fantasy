@@ -8,140 +8,407 @@
 
     <title>My Team | Call-Ups Fantasy</title>
 
-   <link rel="stylesheet"
-      href="{{ url_for('static', filename='css/myTeam.css') }}">
+    <!-- Google Fonts -->
 
-<link rel="stylesheet"
-      href="{{ url_for('static', filename='css/common.css') }}">
-      
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <!-- Stylesheets -->
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/home.css') }}">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/myTeam.css') }}">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/common.css') }}">
+
 </head>
 
-<body>
+<body class="my-team-page">
 
-    <header>
-        <h1>Call-Ups Fantasy</h1>
+    <!-- Navigation -->
 
-       <nav>
+    <nav class="navbar" id="navbar">
 
-    <a href="{{ url_for('index') }}">Dashboard</a>
+        <div class="glass">
 
-    <a href="{{ url_for('my_team') }}">My Team</a>
+            <div class="container container-sm flex justify-between items-center">
 
-    <a href="{{ url_for('league_dashboard') }}">League</a>
+                <a href="{{ url_for('index') }}" class="nav-logo">
+                    CallUps Fantasy
+                </a>
 
-    <a href="{{ url_for('new_league') }}">Create League</a>
+                <div class="nav-links">
 
-</nav>
+                    <a href="{{ url_for('index') }}" class="nav-link">
+                        Dashboard
+                    </a>
 
+                    <a href="{{ url_for('my_team') }}"
+                       class="nav-link active"
+                       aria-current="page">
+                        My Team
+                    </a>
 
-    </header>
+                    <a href="{{ url_for('index') }}#scouting-hub"
+                       class="nav-link">
+                        Players
+                    </a>
 
-    <main>
+                    <a href="{{ url_for('league_dashboard') }}"
+                       class="nav-link">
+                        League
+                    </a>
 
-        <h1>My Teams</h1>
+                </div>
 
-        <p>View and manage your fantasy football teams.</p>
+                <div class="flex items-center gap-4">
 
-        <!-- Flash messages -->
+                    <span class="nav-username">
+                        @{{ current_user.username }}
+                    </span>
 
-{% with messages = get_flashed_messages(with_categories=true) %}
+                    <a href="{{ url_for('security.logout') }}"
+                       class="nav-link logout-link">
+                        Log out
+                    </a>
 
-    {% if messages %}
+                </div>
 
-        {% for category, message in messages %}
-
-            <div class="flash-message {{ category }}">
-                {{ message }}
             </div>
 
-        {% endfor %}
+        </div>
 
-    {% endif %}
+    </nav>
 
-{% endwith %}
+    <!-- Main content -->
 
-        {% if teams %}
+    <main class="dashboard-wrapper">
 
-            <div class="teams-container">
+        <div class="container container-sm">
 
-                {% for team in teams %}
+            <!-- Flash messages -->
 
-                    <article class="team-card">
+            {% with messages = get_flashed_messages(with_categories=true) %}
 
-                        <h2>{{ team.name }}</h2>
+                {% if messages %}
 
-                        <!-- Edit team name form -->
+                    {% for category, message in messages %}
 
-<form action="{{ url_for('rename_team', team_id=team.id) }}"
-      method="POST"
-      class="rename-form">
+                        <div class="auth-alert {% if category == 'error' or category == 'danger' %}auth-alert-danger{% else %}auth-alert-info{% endif %}">
 
-    <input type="hidden"
-           name="csrf_token"
-           value="{{ csrf_token() }}">
-
-    <label for="team-name-{{ team.id }}">
-        Edit Team Name
-    </label>
-
-    <input type="text"
-           id="team-name-{{ team.id }}"
-           name="team_name"
-           value="{{ team.name }}"
-           maxlength="100"
-           required>
-
-    <button type="submit" class="save-btn">
-        Save Name
-    </button>
-
-</form>
-
-                        <p>League: {{ team.league.name }}</p>
-
-                        <p>Number of Bots: {{ team.league.number_of_bots }}</p>
-
-                        <p>Total Teams: {{ team.league.teams | length }}</p>
-
-                        <div class="squad-section">
-
-                            <h3>My Squad</h3>
-
-                            <p>Squad management will be available after the draft.</p>
+                            {{ message }}
 
                         </div>
 
-                    </article>
+                    {% endfor %}
 
-                {% endfor %}
+                {% endif %}
+
+            {% endwith %}
+
+            <!-- Page heading -->
+
+            <div class="dashboard-hero text-center">
+
+                <span class="card-tag tag-green">
+                    Team Management
+                </span>
+
+                <h1 class="hero-title">
+                    My Teams.
+                </h1>
+
+                <p class="team-page-subtitle">
+                    Manage your fantasy football teams and prepare
+                    your squad for the season.
+                </p>
+
+                <a href="{{ url_for('new_league') }}" class="btn-ultra">
+                    + Create League
+                </a>
 
             </div>
 
-        {% else %}
+            <!-- Teams overview -->
 
-            <div class="empty-state">
+            {% if teams %}
 
-                <h2>No teams yet</h2>
+                <div class="teams-overview">
 
-                <p>Create a fantasy league to get your first team.</p>
+                    <h2>Your Teams</h2>
 
-                <a href="{{ url_for('new_league') }}">Create League</a>
+                    <span class="team-count">
+                        {{ teams | length }} Teams
+                    </span>
+
+                </div>
+
+                <div class="teams-container">
+
+                    {% for team in teams %}
+
+                        <article class="team-card">
+
+                            <!-- Team settings button -->
+
+<button type="button"
+        class="team-settings-btn"
+        data-team-id="{{ team.id }}"
+        title="Customize Team"
+        aria-label="Customize {{ team.name }}">
+
+    <svg xmlns="http://www.w3.org/2000/svg"
+         width="22"
+         height="22"
+         viewBox="0 0 24 24"
+         fill="none"
+         stroke="currentColor"
+         stroke-width="1.8"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         aria-hidden="true">
+
+        <circle cx="12" cy="12" r="3"></circle>
+
+        <path d="M12 2v4
+                 M12 18v4
+                 M2 12h4
+                 M18 12h4
+                 M5 5l3 3
+                 M16 16l3 3
+                 M5 19l3-3
+                 M16 8l3-3"></path>
+
+        <circle cx="12" cy="12" r="8"></circle>
+
+    </svg>
+
+</button>
+
+                            <!-- Team identity -->
+
+                            <div class="team-card-header">
+
+                                <div class="team-avatar">
+                                    {{ team.name[:2] | upper }}
+                                </div>
+
+                                <div class="team-identity">
+
+                                    <span class="card-tag tag-blue">
+                                        Fantasy Club
+                                    </span>
+
+                                    <h2>{{ team.name }}</h2>
+
+                                    <p>{{ team.league.name }}</p>
+
+                                </div>
+
+                            </div>
+
+                            <!-- Team statistics -->
+
+                            <div class="team-stats">
+
+                                <div class="team-stat">
+
+                                    <span>Bot Teams</span>
+
+                                    <strong>
+                                        {{ team.league.number_of_bots }}
+                                    </strong>
+
+                                </div>
+
+                                <div class="team-stat">
+
+                                    <span>Total Teams</span>
+
+                                    <strong>
+                                        {{ team.league.teams | length }}
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                           
+
+                            <!-- Squad management -->
+
+                            <div class="squad-section">
+
+                                <div class="squad-header">
+
+                                    <h3>My Squad</h3>
+
+                                    <span class="card-tag tag-purple">
+                                        Draft Pending
+                                    </span>
+
+                                </div>
+
+                                <p>
+                                    Squad management will be available
+                                    after the draft.
+                                </p>
+
+                            </div>
+
+                            <a href="{{ url_for('league_dashboard') }}"
+                               class="team-league-link">
+
+                                View My Leagues &rarr;
+
+                            </a>
+
+                        </article>
+
+                        <!-- Team customization modal -->
+
+<dialog class="team-modal"
+        id="team-modal-{{ team.id }}"
+        aria-labelledby="modal-title-{{ team.id }}">
+
+    <div class="modal-content">
+
+        <!-- Modal header -->
+
+        <div class="modal-header">
+
+            <h2 id="modal-title-{{ team.id }}">
+                Customize Your Team
+            </h2>
+
+            <button type="button"
+                    class="modal-close-btn"
+                    aria-label="Close customization">
+
+                &times;
+
+            </button>
+
+        </div>
+
+        <p class="modal-description">
+            Give your fantasy team its own identity.
+        </p>
+
+        <!-- Logo preview -->
+
+        <div class="logo-preview-container">
+
+            <div class="team-avatar logo-preview">
+
+                {{ team.name[:2] | upper }}
 
             </div>
 
-        {% endif %}
+            <span>Logo Preview</span>
+
+        </div>
+
+        <!-- Customization form -->
+
+        <form action="{{ url_for('rename_team', team_id=team.id) }}"
+              method="POST"
+              class="customization-form">
+
+            <input type="hidden"
+                   name="csrf_token"
+                   value="{{ csrf_token() }}">
+
+            <label for="team-name-{{ team.id }}">
+                Team Name
+            </label>
+
+            <input type="text"
+                   id="team-name-{{ team.id }}"
+                   name="team_name"
+                   value="{{ team.name }}"
+                   maxlength="100"
+                   required>
+
+            <!-- Modal actions -->
+
+            <div class="modal-actions">
+
+                <button type="button"
+                        class="modal-cancel-btn">
+
+                    Cancel
+
+                </button>
+
+                <button type="submit"
+                        class="modal-save-btn">
+
+                    Save Changes
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</dialog>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <!-- Empty state -->
+
+                <div class="empty-state">
+
+                    <h2>No teams yet</h2>
+
+                    <p>
+                        Create a fantasy league to get your first team.
+                    </p>
+
+                    <a href="{{ url_for('new_league') }}"
+                       class="btn-ultra">
+
+                        Create League
+
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </div>
 
     </main>
 
-   <footer>
+    <!-- Footer -->
 
-    <p>&copy; 2026 Call-Ups Fantasy</p>
+    <footer class="team-footer">
 
-    <a href="{{ url_for('privacy_policy') }}" class="privacy-link">
-        Privacy Policy
-    </a>
+        <p>&copy; 2026 Call-Ups Fantasy</p>
 
-</footer>
+        <a href="{{ url_for('privacy_policy') }}"
+           class="privacy-link">
+
+            Privacy Policy
+
+        </a>
+
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/myTeam.js') }}"></script>
 
 </body>
 
