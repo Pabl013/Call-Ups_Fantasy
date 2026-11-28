@@ -125,16 +125,26 @@
     border-radius: 22px;
 
     background: linear-gradient(
-        135deg,
-        #2997ff,
-        #174ea6
-    );
+    135deg,
+    var(--team-logo-color, #2997ff),
+    color-mix(
+        in srgb,
+        var(--team-logo-color, #2997ff) 60%,
+        black
+    )
+);
 
     color: #ffffff;
     font-size: 1.75rem;
     font-weight: 700;
 
-    box-shadow: 0 8px 24px rgba(41, 151, 255, 0.25);
+  box-shadow: 0 8px 24px color-mix(
+    in srgb,
+    var(--team-logo-color, #2997ff) 25%,
+    transparent
+);
+
+text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
 }
 
 .team-identity {
@@ -724,4 +734,108 @@
 .team-modal::-webkit-scrollbar-thumb {
     background: #48484a;
     border-radius: 10px;
+}
+
+/* =========================================
+   TEAM COLOR CUSTOMIZATION
+========================================= */
+
+.color-customization {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 12px;
+}
+
+.color-presets {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.color-option {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    background: var(--swatch-color);
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.25s var(--ease-apple);
+}
+
+.color-option:hover {
+    transform: scale(1.12);
+    border-color: white;
+}
+
+.color-option:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 3px;
+}
+
+.color-option.selected {
+    border: 2px solid white;
+    box-shadow: 0 0 0 3px var(--apple-blue);
+}
+
+.color-option.selected::after {
+    content: "✓";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+}
+
+.custom-color-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    margin-top: 6px;
+}
+
+.custom-color-container input[type="color"] {
+    width: 48px;
+    height: 36px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.custom-color-container input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.custom-color-container input[type="color"]::-webkit-color-swatch {
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+}
+
+.custom-color-container input[type="color"]::-moz-color-swatch {
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+}
+
+@media (max-width: 480px) {
+
+    .color-presets {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .color-option {
+        max-width: 44px;
+        justify-self: center;
+    }
+
 }

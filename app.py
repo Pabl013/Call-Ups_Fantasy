@@ -1,6 +1,7 @@
 import os
 import json
 import requests
+import re
 
 from dotenv import load_dotenv
 
@@ -304,6 +305,12 @@ class Team(db.Model):
         db.Boolean,
         default=False,
         nullable=False
+    )
+
+    logo_color = db.Column(
+        db.String(7),
+        nullable=False,
+        default="#2997ff"
     )
 
     league = db.relationship(
@@ -620,25 +627,38 @@ def rename_team(team_id):
         is_bot=False
     ).first_or_404()
 
-    # Get the new team name from the form
+    # Get customization values
     new_name = (request.form.get('team_name') or '').strip()
 
-    # Validate the new team name
+    new_color = request.form.get(
+        'logo_color',
+        team.logo_color
+    ).strip()
+
+    # Validate team name
     if not new_name:
+
         flash("Please enter a team name.", "error")
 
     elif len(new_name) > 100:
+
         flash("Team name cannot exceed 100 characters.", "error")
+
+    # Validate hexadecimal color
+    elif not re.fullmatch(r"#[0-9a-fA-F]{6}", new_color):
+
+        flash("Please select a valid logo color.", "error")
 
     else:
 
-        # Update the team name
+        # Update team customization
         team.name = new_name
+        team.logo_color = new_color.lower()
 
-        # Save the changes in the database
+        # Save changes to the database
         db.session.commit()
 
-        flash("Team name updated successfully!", "info")
+        flash("Team customization updated successfully!", "info")
 
     return redirect(url_for('my_team'))
 
@@ -800,3 +820,4 @@ def playerRequestByID(id: str):
 
 if __name__ == '__main__':
     app.run(debug=True)
+

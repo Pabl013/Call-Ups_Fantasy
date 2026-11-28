@@ -194,10 +194,12 @@
                             <!-- Team identity -->
 
                             <div class="team-card-header">
+<div class="team-avatar"
+     style="--team-logo-color: {{ team.logo_color }};">
 
-                                <div class="team-avatar">
-                                    {{ team.name[:2] | upper }}
-                                </div>
+    {{ team.name[:2] | upper }}
+
+</div>
 
                                 <div class="team-identity">
 
@@ -305,11 +307,12 @@
 
         <div class="logo-preview-container">
 
-            <div class="team-avatar logo-preview">
+            <div class="team-avatar logo-preview"
+     style="--team-logo-color: {{ team.logo_color }};">
 
-                {{ team.name[:2] | upper }}
+    {{ team.name[:2] | upper }}
 
-            </div>
+</div>
 
             <span>Logo Preview</span>
 
@@ -335,6 +338,81 @@
                    value="{{ team.name }}"
                    maxlength="100"
                    required>
+
+                   <!-- Team Logo Color -->
+<div class="color-customization">
+
+    <label>Logo Color</label>
+
+    <div class="color-presets">
+
+        <button type="button" class="color-option"
+            data-color="#2997ff"
+            style="--swatch-color: #2997ff;"
+            aria-label="Blue">
+        </button>
+
+        <button type="button" class="color-option"
+            data-color="#ff453a"
+            style="--swatch-color: #ff453a;"
+            aria-label="Red">
+        </button>
+
+        <button type="button" class="color-option"
+            data-color="#34c759"
+            style="--swatch-color: #34c759;"
+            aria-label="Green">
+        </button>
+
+        <button type="button" class="color-option"
+            data-color="#bf5af2"
+            style="--swatch-color: #bf5af2;"
+            aria-label="Purple">
+        </button>
+
+        <button type="button" class="color-option"
+            data-color="#ff9f0a"
+            style="--swatch-color: #ff9f0a;"
+            aria-label="Orange">
+        </button>
+
+        <button type="button" class="color-option"
+            data-color="#ffd60a"
+            style="--swatch-color: #ffd60a;"
+            aria-label="Yellow">
+        </button>
+
+        <button type="button" class="color-option"
+            data-color="#ff375f"
+            style="--swatch-color: #ff375f;"
+            aria-label="Pink">
+        </button>
+
+        <button type="button" class="color-option"
+            data-color="#2c2c2e"
+            style="--swatch-color: #2c2c2e;"
+            aria-label="Black">
+        </button>
+
+    </div>
+
+    <!-- Custom Color Picker -->
+    <div class="custom-color-container">
+
+        <label for="team-color-{{ team.id }}">
+            Custom Color
+        </label>
+
+        <input
+            type="color"
+            id="team-color-{{ team.id }}"
+            name="logo_color"
+            value="{{ team.logo_color }}"
+        >
+
+    </div>
+
+</div>
 
             <!-- Modal actions -->
 

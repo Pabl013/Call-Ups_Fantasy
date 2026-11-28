@@ -1,29 +1,26 @@
 document.addEventListener("DOMContentLoaded", function () {
 
-    // Get all team settings buttons
-
     const settingsButtons = document.querySelectorAll(".team-settings-btn");
 
+    // Open customization modal
     settingsButtons.forEach(function (button) {
 
         button.addEventListener("click", function () {
 
             const teamId = button.dataset.teamId;
 
-            const modal = document.getElementById("team-modal-" + teamId);
+            const modal = document.getElementById(
+                "team-modal-" + teamId
+            );
 
             if (modal && !modal.open) {
-
                 modal.showModal();
-
             }
 
         });
 
     });
 
-
-    // Get all customization modals
 
     const modals = document.querySelectorAll(".team-modal");
 
@@ -39,9 +36,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const logoPreview = modal.querySelector(".logo-preview");
 
+        const colorInput = modal.querySelector('input[name="logo_color"]');
+
+        const colorOptions = modal.querySelectorAll(".color-option");
+
 
         // Update logo initials
-
         function updateLogoPreview() {
 
             const teamName = nameInput.value.trim();
@@ -52,15 +52,62 @@ document.addEventListener("DOMContentLoaded", function () {
 
             } else {
 
-                logoPreview.textContent = teamName.substring(0, 2).toUpperCase();
+                logoPreview.textContent =
+                    teamName.substring(0, 2).toUpperCase();
 
             }
 
         }
 
 
-        // Close button
+        // Update logo color
+        function updateLogoColor() {
 
+            const selectedColor = colorInput.value;
+
+            logoPreview.style.setProperty(
+                "--team-logo-color",
+                selectedColor
+            );
+
+            colorOptions.forEach(function (option) {
+
+                const isSelected =
+                    option.dataset.color.toLowerCase() ===
+                    selectedColor.toLowerCase();
+
+                option.classList.toggle("selected", isSelected);
+
+                option.setAttribute("aria-pressed", isSelected);
+
+            });
+
+        }
+
+
+        // Preset color selection
+        colorOptions.forEach(function (option) {
+
+            option.addEventListener("click", function () {
+
+                colorInput.value = option.dataset.color;
+
+                updateLogoColor();
+
+            });
+
+        });
+
+
+        // Custom color selection
+        colorInput.addEventListener("input", updateLogoColor);
+
+
+        // Live team name preview
+        nameInput.addEventListener("input", updateLogoPreview);
+
+
+        // Close modal
         closeButton.addEventListener("click", function () {
 
             modal.close();
@@ -68,8 +115,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
 
-        // Cancel button
-
+        // Cancel customization
         cancelButton.addEventListener("click", function () {
 
             modal.close();
@@ -77,13 +123,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
 
-        // Live logo preview
-
-        nameInput.addEventListener("input", updateLogoPreview);
-
-
-        // Close when clicking outside the modal
-
+        // Close when clicking outside
         modal.addEventListener("click", function (event) {
 
             if (event.target === modal) {
@@ -95,15 +135,22 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
 
-        // Reset unsaved changes when closing
-
+        // Restore saved values when closing
         modal.addEventListener("close", function () {
 
             form.reset();
 
             updateLogoPreview();
 
+            updateLogoColor();
+
         });
+
+
+        // Initialize saved values
+        updateLogoPreview();
+
+        updateLogoColor();
 
     });
 
